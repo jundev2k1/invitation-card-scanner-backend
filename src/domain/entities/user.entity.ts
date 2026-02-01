@@ -1,4 +1,4 @@
-import { createUUIDv7 } from "src/common";
+import { UUIdHelper } from "src/common";
 
 export class User {
     constructor(
@@ -15,6 +15,6 @@ export class User {
         if (!props.name || props.name.trim().length === 0)
             throw new Error('Name is required');
 
-        return new User(createUUIDv7(), props.name.trim(), props.email.trim(), props.hashPassword.trim());
+        return new User(UUIdHelper.createUUIDv7(), props.name.trim(), props.email.trim(), props.hashPassword.trim());
     }
 }

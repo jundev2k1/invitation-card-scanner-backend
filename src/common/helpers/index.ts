@@ -1,2 +1,1 @@
-export * from './uuidHelper';
-export * from './passwordHelper';
+export * as UUIdHelper from './uuid.helper';
