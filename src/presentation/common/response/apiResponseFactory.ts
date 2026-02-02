@@ -1,34 +1,37 @@
-export class ApiResponse<T> {
+import { ApiMessages } from "src/common/constants/api-messages";
+import { ApiResponse } from "./apiResponse";
+
+export class ApiResponseFactory<T> {
     constructor(
         public readonly data: T,
-        public readonly message: string = 'Request successful',
+        public readonly message: string = ApiMessages.SUCCESS,
         public readonly statusCode: number = 200,
     ) { }
 
     static success<T>(
         data: T,
-        message: string = 'Request successful',
+        message: string = ApiMessages.SUCCESS,
         statusCode: number = 200
     ): ApiResponse<T> {
-        return new ApiResponse<T>(data, message, statusCode);
+        return new ApiResponse<T>(data, statusCode, message);
     }
 
     static created<T>(
         data: T,
-        message: string = 'Resource created successfully',
+        message: string = ApiMessages.CREATED,
     ): ApiResponse<T> {
-        return new ApiResponse<T>(data, message, 201);
+        return new ApiResponse<T>(data, 201, message);
     }
 
-    static noContent(): ApiResponse<null> {
-        return new ApiResponse<null>(null, 'No Content', 204);
+    static noContent(message: string = ApiMessages.SUCCESS): ApiResponse<null> {
+        return new ApiResponse<null>(null, 200, message);
     }
 
     static error<T>(
         data: T,
-        message: string = 'An error occurred',
+        message: string = ApiMessages.SYSTEM_ERROR,
         statusCode: number = 500
     ): ApiResponse<T> {
-        return new ApiResponse<T>(data, message, statusCode);
+        return new ApiResponse<T>(data, statusCode, message);
     }
 }
