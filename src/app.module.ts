@@ -2,16 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from './infrastracture/config/app-config.validation';
 import { AppConfigService } from './infrastracture/config/app-config.service';
-import { APP_CONFIG } from './common/tokens';
 
 @Module({
     imports: [ConfigModule.forRoot({ isGlobal: true, validate })],
-    providers: [
-        {
-            provide: APP_CONFIG,
-            useClass: AppConfigService
-        }
-    ]
+    providers: [AppConfigService],
+    exports: [AppConfigService],
 })
 
 export class AppModule { };
