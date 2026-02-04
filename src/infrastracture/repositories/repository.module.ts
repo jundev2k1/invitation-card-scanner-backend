@@ -10,6 +10,6 @@ const repoProviders = [
 @Module({
   imports: [DatabaseModule],
   providers: [...repoProviders],
-  exports: [...repoProviders],
+  exports: [...repoProviders.map(provider => provider.provide)],
 })
 export class RepositoryModule { }
