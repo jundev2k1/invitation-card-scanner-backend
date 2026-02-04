@@ -1,7 +1,8 @@
 import { Module } from "@nestjs/common";
 import { JwtModule as NestJwtModule } from "@nestjs/jwt";
-import { APP_CONFIG } from "src/common/tokens";
+import { APP_CONFIG, AUTH_SERVICE } from "src/common/tokens";
 import { AppConfigService } from "../config/app-config.service";
+import { AuthService } from "./auth.service";
 
 @Module({
   imports: [
@@ -15,6 +16,12 @@ import { AppConfigService } from "../config/app-config.service";
       }),
     }),
   ],
-  exports: [NestJwtModule],
+  providers: [
+    {
+      provide: AUTH_SERVICE,
+      useClass: AuthService,
+    }
+  ],
+  exports: [NestJwtModule, AUTH_SERVICE],
 })
-export class JwtModule { }
+export class AuthModule { }

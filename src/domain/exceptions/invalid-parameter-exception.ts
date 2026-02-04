@@ -24,14 +24,14 @@ export class InvalidParameterException extends DomainException {
 
   static ThrowIf(condition: boolean, value: string) {
     if (condition) {
-      const invalidFormatException = InvalidFormatException.InvalidFormat(value);
+      const message = `Invalid parameter: ${value}`;
       throw new InvalidParameterException(
-        invalidFormatException.message,
-        Constants.ApiMessages.INVALID_FORMAT);
+        message,
+        Constants.ApiMessages.INVALID_PARAMETER);
     }
   }
 
-  static ThrowIfNull(value: any, message: string | null) {
+  static ThrowIfNull(value: any, message: string | null = null) {
     if (value === null || value === undefined) {
       const errorMessage = message || `A required value is null or undefined.`;
       throw new InvalidParameterException(
@@ -40,8 +40,8 @@ export class InvalidParameterException extends DomainException {
     }
   }
 
-  static ThrowIfEmptyString(value: string, message: string | null) {
-    if (value.trim() === '') {
+  static ThrowIfEmptyString(value: string, message: string | null = null) {
+    if (!value || value.trim() === '') {
       const errorMessage = message || `A required string value is empty.`;
       throw new InvalidParameterException(
         errorMessage,
@@ -49,7 +49,7 @@ export class InvalidParameterException extends DomainException {
     }
   }
 
-  static ThrowIfGreaterThan(value: number, threshold: number, message: string | null) {
+  static ThrowIfGreaterThan(value: number, threshold: number, message: string | null = null) {
     if (value > threshold) {
       const errorMessage = message || `The value '${value}' exceeds the allowed threshold of '${threshold}'.`;
       throw new InvalidParameterException(
@@ -58,7 +58,7 @@ export class InvalidParameterException extends DomainException {
     }
   }
 
-  static ThrowIfGreaterThanOrEqual(value: number, threshold: number, message: string | null) {
+  static ThrowIfGreaterThanOrEqual(value: number, threshold: number, message: string | null = null) {
     if (value >= threshold) {
       const errorMessage = message || `The value '${value}' meets or exceeds the allowed threshold of '${threshold}'.`;
       throw new InvalidParameterException(
@@ -67,7 +67,7 @@ export class InvalidParameterException extends DomainException {
     }
   }
 
-  static ThrowIfLessThan(value: number, threshold: number, message: string | null) {
+  static ThrowIfLessThan(value: number, threshold: number, message: string | null = null) {
     if (value < threshold) {
       const errorMessage = message || `The value '${value}' is below the allowed threshold of '${threshold}'.`;
       throw new InvalidParameterException(
@@ -76,7 +76,7 @@ export class InvalidParameterException extends DomainException {
     }
   }
 
-  static ThrowIfLessThanOrEqual(value: number, threshold: number, message: string | null) {
+  static ThrowIfLessThanOrEqual(value: number, threshold: number, message: string | null = null) {
     if (value <= threshold) {
       const errorMessage = message || `The value '${value}' meets or is below the allowed threshold of '${threshold}'.`;
       throw new InvalidParameterException(

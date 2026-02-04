@@ -5,7 +5,7 @@ import { ApiMessageDetail } from "src/common/constants";
 export class InvalidFormatException extends DomainException {
   readonly status: number = Constants.HttpStatus.BAD_REQUEST;
 
-  constructor(message: string, messageCode: ApiMessageDetail) {
+  constructor(message: string, messageCode: ApiMessageDetail = Constants.ApiMessages.INVALID_FORMAT) {
     super(message);
     this.code = messageCode;
   }
