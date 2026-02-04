@@ -1,0 +1,1 @@
+export { Argon2PasswordHasher as PasswordHasher } from "./password-hasher";
