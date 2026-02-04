@@ -2,7 +2,6 @@ import { Global, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IAppConfig } from '../../domain/interfaces/configs/config.interface';
 
-@Global()
 @Injectable()
 export class AppConfigService implements IAppConfig {
   constructor(private configService: ConfigService) { }

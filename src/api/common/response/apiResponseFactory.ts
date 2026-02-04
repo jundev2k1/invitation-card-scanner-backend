@@ -22,11 +22,10 @@ export class ApiResponseFactory {
     return new ApiResponse<null>(null, 200, message.code, message.message);
   }
 
-  static error<T>(
-    data: T,
+  static error(
     message: ApiMessageDetail = Constants.ApiMessages.SYSTEM_ERROR,
     statusCode: number = 500
-  ): ApiResponse<T> {
-    return new ApiResponse<T>(data, statusCode, message.code, message.message);
+  ): ApiResponse<null> {
+    return new ApiResponse<null>(null, statusCode, message.code, message.message);
   }
 }
