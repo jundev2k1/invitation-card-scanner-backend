@@ -3,6 +3,7 @@ import {
   ExceptionFilter,
   ArgumentsHost,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Constants } from 'src/common';
 import { ApiResponseFactory } from '../common';
@@ -34,7 +35,7 @@ export class AppExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     const { status, messageCode, message, details, log } = this.getError(exception);
 
-    console.error(`[${request.method}] ${request.url} - ${log}`);
+    Logger.error(`[${request.method}] ${request.url} - ${log}`);
 
     const errorRes = ApiResponseFactory.error(
       { code: messageCode, message: message },
