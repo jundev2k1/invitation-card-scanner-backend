@@ -5,6 +5,7 @@ import { PaginatedResult } from "src/application/common";
 import { POSTGRES_POOL } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { IUserRepo } from "src/domain/interfaces/repositories/user.repo";
+import { mapToUserEntity } from "./mapping/user.mapping";
 
 @Injectable()
 export class UserRepo implements IUserRepo {
@@ -17,7 +18,11 @@ export class UserRepo implements IUserRepo {
     }
 
     async getById(id: string): Promise<User | null> {
-        return User.create({ name: 'test', email: 'test@g.c', hashPassword: 'password' });
+        const stored = sql.unsafe`SELECT * FROM get_user_by_id(${id});`;
+        const data = await this.pool.maybeOne(stored);
+        return data != null
+            ? mapToUserEntity(data)
+            : null;
     }
 
     async create(user: User): Promise<void> {
