@@ -1,5 +1,5 @@
 import { Controller, Post } from "@nestjs/common";
-import { ApiResponseFactory } from "../common/response/apiResponseFactory";
+import { ApiResponseFactory } from "src/api/common";
 import { ApiTags } from "@nestjs/swagger";
 
 @ApiTags('Auth')
