@@ -4,8 +4,8 @@ import { dbProvider } from "./slonik.provider";
 
 @Global()
 @Module({
-    imports: [AppConfigService],
-    providers: [dbProvider],
-    exports: [dbProvider],
+  imports: [AppConfigService],
+  providers: [dbProvider],
+  exports: [dbProvider],
 })
 export class DatabaseModule { };

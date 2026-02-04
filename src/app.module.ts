@@ -8,10 +8,10 @@ import { UserRepo } from './infrastracture/repositories/user.repo';
 import { dbProvider } from './infrastracture/database/slonik.provider';
 
 @Module({
-    imports: [ConfigModule.forRoot({ isGlobal: true, validate })],
-    providers: [AppConfigService, dbProvider, { provide: USER_REPO, useClass: UserRepo }],
-    controllers: [AuthController,],
-    exports: [AppConfigService, dbProvider, USER_REPO],
+  imports: [ConfigModule.forRoot({ isGlobal: true, validate })],
+  providers: [AppConfigService, dbProvider, { provide: USER_REPO, useClass: UserRepo }],
+  controllers: [AuthController,],
+  exports: [AppConfigService, dbProvider, USER_REPO],
 })
 
 export class AppModule { };

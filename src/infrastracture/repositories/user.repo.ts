@@ -9,27 +9,27 @@ import { mapToUserEntity } from "./mapping/user.mapping";
 
 @Injectable()
 export class UserRepo implements IUserRepo {
-    constructor(
-        @Inject(POSTGRES_POOL) private readonly pool: DatabasePool
-    ) { }
+  constructor(
+    @Inject(POSTGRES_POOL) private readonly pool: DatabasePool
+  ) { }
 
-    async search(): Promise<PaginatedResult<User>> {
-        return new PaginatedResult<User>([], 0, 1, 1, 20);
-    }
+  async search(): Promise<PaginatedResult<User>> {
+    return new PaginatedResult<User>([], 0, 1, 1, 20);
+  }
 
-    async getById(id: string): Promise<User | null> {
-        const stored = sql.unsafe`SELECT * FROM get_user_by_id(${id});`;
-        const data = await this.pool.maybeOne(stored);
-        return data != null
-            ? mapToUserEntity(data)
-            : null;
-    }
+  async getById(id: string): Promise<User | null> {
+    const stored = sql.unsafe`SELECT * FROM get_user_by_id(${id});`;
+    const data = await this.pool.maybeOne(stored);
+    return data != null
+      ? mapToUserEntity(data)
+      : null;
+  }
 
-    async create(user: User): Promise<void> {
+  async create(user: User): Promise<void> {
 
-    }
+  }
 
-    async update(user: User): Promise<void> {
+  async update(user: User): Promise<void> {
 
-    }
+  }
 }

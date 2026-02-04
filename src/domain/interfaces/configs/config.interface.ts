@@ -1,4 +1,4 @@
 export interface IAppConfig {
-    get port(): number;
-    get nodeEnv(): string;
+  get port(): number;
+  get nodeEnv(): string;
 };
