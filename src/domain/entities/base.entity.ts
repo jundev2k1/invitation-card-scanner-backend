@@ -1,7 +1,11 @@
 export abstract class baseEntity<T> {
   constructor(
-    public readonly id: T,
-    public readonly createdAt: Date,
-    public readonly updatedAt: Date,
+    public id: T,
+    public createdAt: Date,
+    public updatedAt: Date,
   ) { }
+
+  public updateUpdatedAt(): void {
+    this.updatedAt = new Date();
+  }
 }
