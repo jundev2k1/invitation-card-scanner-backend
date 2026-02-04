@@ -5,24 +5,27 @@ import { ApiMessageDetail } from "src/common/constants";
 export class BussinessRuleViolationException extends DomainException {
   readonly status: number = Constants.HttpStatus.BAD_REQUEST;
 
-  constructor(message: string, messageCode: ApiMessageDetail) {
+  constructor(message: string, messageCode: ApiMessageDetail, details = null) {
     super(message);
     this.code = messageCode;
+    this.errorDetails = details;
   }
 
-  static create(messageCode: ApiMessageDetail): BussinessRuleViolationException {
+  static create(messageCode: ApiMessageDetail, details = null): BussinessRuleViolationException {
     return new BussinessRuleViolationException(
       messageCode.message,
-      messageCode);
+      messageCode,
+      details);
   }
 
-  static throwError(messageCode: ApiMessageDetail): BussinessRuleViolationException {
+  static throwError(messageCode: ApiMessageDetail, details = null): BussinessRuleViolationException {
     throw new BussinessRuleViolationException(
       messageCode.message,
-      messageCode);
+      messageCode,
+      details);
   }
 
-  static throw(): BussinessRuleViolationException {
-    throw BussinessRuleViolationException.create(Constants.ApiMessages.BUSSINESS_RULE_VIOLATION);
+  static throw(details = null): BussinessRuleViolationException {
+    throw BussinessRuleViolationException.create(Constants.ApiMessages.BUSSINESS_RULE_VIOLATION, details);
   }
 }

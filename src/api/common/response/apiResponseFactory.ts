@@ -24,8 +24,9 @@ export class ApiResponseFactory {
 
   static error(
     message: ApiMessageDetail = Constants.ApiMessages.SYSTEM_ERROR,
-    statusCode: number = 500
-  ): ApiResponse<null> {
-    return new ApiResponse<null>(null, statusCode, message.code, message.message);
+    statusCode: number = 500,
+    errorDetails = null
+  ): ApiResponse<undefined> {
+    return new ApiResponse<undefined>(undefined, statusCode, message.code, message.message, errorDetails);
   }
 }

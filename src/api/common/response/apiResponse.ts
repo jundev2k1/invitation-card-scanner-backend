@@ -4,6 +4,6 @@ export class ApiResponse<T> {
     public readonly statusCode: number,
     public readonly messageCode: string,
     public readonly message: string,
-    public readonly details: any | undefined = undefined,
+    public readonly details: any | null | undefined = undefined,
   ) { };
 }
