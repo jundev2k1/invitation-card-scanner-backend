@@ -8,10 +8,10 @@ export class BadRequestException extends ApplicationException {
   constructor(message: string, messageCode: ApiMessageDetail, details = null) {
     super(message);
     this.code = messageCode;
-    this.errorDetails = null;
+    this.errorDetails = details;
   }
 
-  static create(messageCode: ApiMessageDetail, details = null): BadRequestException {
+  static create(messageCode: ApiMessageDetail, details: any = null): BadRequestException {
     return new BadRequestException(
       messageCode.message,
       messageCode,
