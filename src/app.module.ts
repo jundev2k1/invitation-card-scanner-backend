@@ -5,6 +5,7 @@ import { InfrastructureModule } from './infrastracture/infrastructure.module';
 import { ApplicationModule } from './application/application.module';
 import { ApiModule } from './api/api.module';
 import { DomainModule } from './domain/domain.module';
+import { CqrsModule } from '@nestjs/cqrs';
 
 const providers = [
   DomainModule,
@@ -16,6 +17,7 @@ const providers = [
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate }),
+    CqrsModule.forRoot(),
     ...providers
   ]
 })
