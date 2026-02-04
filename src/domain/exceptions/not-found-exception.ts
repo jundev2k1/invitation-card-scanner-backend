@@ -10,6 +10,11 @@ export class NotFoundException extends DomainException {
     this.code = messageCode;
   }
 
+  static create(name: string, value: any): NotFoundException {
+    const message = `The resource with ${name}='${value}' was not found.`;
+    return new NotFoundException(message, Constants.ApiMessages.NOT_FOUND);
+  }
+
   static ThrowError(messageCode: ApiMessageDetail): NotFoundException {
     throw new NotFoundException(
       messageCode.message,
@@ -17,7 +22,6 @@ export class NotFoundException extends DomainException {
   }
 
   static Throw(name: string, value: any): NotFoundException {
-    const message = `The resource with ${name}='${value}' was not found.`;
-    throw new NotFoundException(message, Constants.ApiMessages.NOT_FOUND);
+    throw this.create(name, value);
   }
 }

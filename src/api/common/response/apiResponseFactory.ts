@@ -3,7 +3,7 @@ import { ApiResponse } from "./apiResponse";
 import { ApiMessageDetail } from "src/common/constants";
 
 export class ApiResponseFactory {
-  static success<T>(
+  static ok<T>(
     data: T,
     message: ApiMessageDetail = Constants.ApiMessages.SUCCESS,
     statusCode: number = 200

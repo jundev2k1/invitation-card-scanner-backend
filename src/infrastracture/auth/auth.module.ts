@@ -3,6 +3,8 @@ import { JwtModule as NestJwtModule } from "@nestjs/jwt";
 import { APP_CONFIG, AUTH_SERVICE } from "src/common/tokens";
 import { AppConfigService } from "../config/app-config.service";
 import { AuthService } from "./auth.service";
+import { RepositoryModule } from "../repositories/repository.module";
+import { SecurityModule } from "../security/security.module";
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { AuthService } from "./auth.service";
         },
       }),
     }),
+    RepositoryModule,
+    SecurityModule,
   ],
   providers: [
     {
