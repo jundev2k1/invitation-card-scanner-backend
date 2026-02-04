@@ -4,10 +4,11 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AppConfigService } from './infrastracture/config/app-config.service';
+import { APP_CONFIG } from './common/tokens';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(AppConfigService);
+  const configService = app.get(APP_CONFIG) as AppConfigService;
 
   // Add swagger setup
   const config = new DocumentBuilder()

@@ -1,17 +1,23 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from './infrastracture/config/app-config.validation';
-import { AppConfigService } from './infrastracture/config/app-config.service';
-import { AuthController } from './presentation/controllers/auth.controller';
-import { USER_REPO } from './common/tokens';
-import { UserRepo } from './infrastracture/repositories/user.repo';
-import { dbProvider } from './infrastracture/database/slonik.provider';
+import { InfrastructureModule } from './infrastracture/infrastructure.module';
+import { ApplicationModule } from './application/application.module';
+import { ApiModule } from './api/api.module';
+import { DomainModule } from './domain/domain.module';
+
+const providers = [
+  DomainModule,
+  InfrastructureModule,
+  ApplicationModule,
+  ApiModule,
+];
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, validate })],
-  providers: [AppConfigService, dbProvider, { provide: USER_REPO, useClass: UserRepo }],
-  controllers: [AuthController,],
-  exports: [AppConfigService, dbProvider, USER_REPO],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true, validate }),
+    ...providers
+  ]
 })
 
 export class AppModule { };

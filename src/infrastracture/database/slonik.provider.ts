@@ -1,5 +1,5 @@
 import { createPool, DatabasePool } from 'slonik';
-import { POSTGRES_POOL } from 'src/common/tokens';
+import { APP_CONFIG, POSTGRES_POOL } from 'src/common/tokens';
 import { AppConfigService } from '../config/app-config.service';
 
 export const dbProvider = {
@@ -7,5 +7,5 @@ export const dbProvider = {
   useFactory: async (config: AppConfigService): Promise<DatabasePool> => {
     return createPool(config.databaseUrl);
   },
-  inject: [AppConfigService]
+  inject: [APP_CONFIG]
 }
