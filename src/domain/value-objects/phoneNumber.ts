@@ -4,7 +4,7 @@ import { InvalidFormatException } from "../exceptions";
 export default class PhoneNumber {
   private constructor(public readonly value: string) { }
 
-  static empty() { return this.of('') }
+  static get empty() { return this.of('') }
 
   static of(raw: string): PhoneNumber {
     const rawValue = raw.trim();

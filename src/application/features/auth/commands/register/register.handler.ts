@@ -41,7 +41,7 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
       username: request.username,
       passwordHash: hashPassword,
       email: request.email,
-      role: Role.staff(),
+      role: Role.staff,
     });
     userEntity.updateUserInfo(request.nickName, request.sex, request.bio);
     userEntity.updatePhoneNumber(request.phoneNumber);

@@ -20,7 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migrate:new": "dbmate new",
     "migrate:up": "dbmate up",
-    "migrate:down": "dbmate down"
+    "migrate:down": "dbmate down",
+    "seed": "ts-node -r dotenv/config src/infrastracture/database/seeds/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

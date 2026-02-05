@@ -3,9 +3,9 @@ import { InvalidFormatException } from "../exceptions";
 export default class Role {
   private constructor(public readonly value: string) { }
 
-  static root(): Role { return this.of('ROOT'); }
-  static admin(): Role { return this.of('ADMIN'); }
-  static staff(): Role { return this.of('STAFF'); }
+  static get root(): Role { return this.of('ROOT'); }
+  static get admin(): Role { return this.of('ADMIN'); }
+  static get staff(): Role { return this.of('STAFF'); }
 
   static of(raw: string): Role {
     const rawValue = raw.trim().toUpperCase();
