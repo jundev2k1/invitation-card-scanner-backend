@@ -3,7 +3,7 @@ import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { PaginatedResult } from "src/application/common";
 import { USER_REPO } from "src/common/tokens";
 import { UserRepo } from "src/infrastracture/repositories";
-import { UserSearchItem } from "../../dtos/user-search-item";
+import { UserSearchItem } from "../../dtos/user-search-item.dto";
 import { GetUserListQuery } from "./get-user-list.query";
 
 @QueryHandler(GetUserListQuery)

@@ -1,10 +1,12 @@
 import { Module } from "@nestjs/common";
 import { RepositoryModule } from "src/infrastracture/repositories/repository.module";
 import { ApproveUserHandler } from "./commands/approve-user/approve-user.handler";
+import { GetUserDetailHandler } from "./queries/get-user-detail/get-user-detail.handler";
 import { GetUserListHandler } from "./queries/get-user-list/get-user-list.handler";
 
 const queries = [
-  GetUserListHandler
+  GetUserListHandler,
+  GetUserDetailHandler,
 ];
 const commands = [
   ApproveUserHandler

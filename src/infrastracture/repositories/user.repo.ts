@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import type { DatabasePool } from 'slonik';
 import { sql } from 'slonik';
 import { PaginatedResult } from "src/application/common";
-import { UserSearchItem } from "src/application/features/users/dtos/user-search-item";
+import { UserSearchItem } from "src/application/features/users/dtos/user-search-item.dto";
 import { POSTGRES_POOL } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { IUserRepo } from "src/domain/interfaces/repositories/user.repo";

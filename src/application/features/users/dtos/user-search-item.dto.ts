@@ -11,5 +11,6 @@ export class UserSearchItem {
     public readonly avatarUrl: string,
     public readonly status: UserStatus,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date) { }
+    public readonly updatedAt: Date
+  ) { }
 }
