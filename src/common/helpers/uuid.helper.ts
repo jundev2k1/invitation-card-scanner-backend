@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto"
+import { randomUUID } from "crypto";
 import { uuidv7 } from "uuidv7";
 
 export const createUUIDv4 = () => {

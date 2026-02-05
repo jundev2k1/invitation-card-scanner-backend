@@ -1,6 +1,7 @@
 import { Inject } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { BadRequestException } from "src/application/common";
+import { UUIdHelper } from "src/common";
 import { ApiMessages } from "src/common/constants";
 import { PASSWORD_HASHER, USER_REPO } from "src/common/tokens";
 import { User } from "src/domain/entities";
@@ -9,6 +10,7 @@ import { IAuthService } from "src/domain/interfaces/auth/auth.service";
 import { Password } from "src/domain/value-objects";
 import { UserRepo } from "../repositories";
 import { PasswordHasher } from "../security";
+import { JwtPayload } from "./jwt.payload";
 
 export class AuthService implements IAuthService {
   constructor(
@@ -16,7 +18,7 @@ export class AuthService implements IAuthService {
     @Inject(PASSWORD_HASHER) private readonly passwordHasher: PasswordHasher,
     private readonly jwtService: JwtService) { }
 
-  async login(username: string, rawPassword: Password): Promise<[string, User]> {
+  async login(username: string, rawPassword: Password): Promise<[string, string, User]> {
     const user = await this.userRepo.getByUsername(username);
     if (!user) throw BadRequestException.create(ApiMessages.INVALID_CREDENTIALS);
 
@@ -39,8 +41,9 @@ export class AuthService implements IAuthService {
     }
 
     // Generate access token
-    const tokenPayload = { sub: user?.id, role: user?.role.value };
-    return [await this.jwtService.signAsync(tokenPayload), user];
+    const jwtId = UUIdHelper.createUUIDv7();
+    const tokenPayload = new JwtPayload(user?.id, jwtId, user?.role.value);
+    return [await this.jwtService.signAsync(tokenPayload), jwtId, user];
   }
 
   async logout(token: string): Promise<void> {
