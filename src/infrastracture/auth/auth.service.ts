@@ -1,14 +1,14 @@
 import { Inject } from "@nestjs/common";
-import { IAuthService } from "src/domain/interfaces/auth/auth.service";
-import { UserRepo } from "../repositories/user.repo";
-import { PASSWORD_HASHER, USER_REPO } from "src/common/tokens";
-import { PasswordHasher } from "../security";
+import { JwtService } from "@nestjs/jwt";
 import { BadRequestException } from "src/application/common";
 import { ApiMessages } from "src/common/constants";
-import { JwtService } from "@nestjs/jwt";
-import { Password } from "src/domain/value-objects";
+import { PASSWORD_HASHER, USER_REPO } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { UserStatus } from "src/domain/enums";
+import { IAuthService } from "src/domain/interfaces/auth/auth.service";
+import { Password } from "src/domain/value-objects";
+import { UserRepo } from "../repositories/user.repo";
+import { PasswordHasher } from "../security";
 
 export class AuthService implements IAuthService {
   constructor(
@@ -21,8 +21,8 @@ export class AuthService implements IAuthService {
     if (!user) throw BadRequestException.create(ApiMessages.INVALID_CREDENTIALS);
 
     // Validate password
-    const hashPassword = await this.passwordHasher.hash(rawPassword.value);
-    if (user.hashPassword !== hashPassword)
+    const isValid = await this.passwordHasher.compare(rawPassword.value, user.passwordHash);
+    if (!isValid)
       throw BadRequestException.create(ApiMessages.INVALID_CREDENTIALS);
 
     // Validate user status

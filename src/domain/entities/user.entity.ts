@@ -1,14 +1,14 @@
 import { UUIdHelper } from "src/common";
-import { baseEntity } from "./base.entity";
 import { UserStatus } from "../enums";
-import { Email, PhoneNumber, Role, Sex, UserName } from "../value-objects";
 import { InvalidParameterException } from "../exceptions";
+import { Email, PhoneNumber, Role, Sex, UserName } from "../value-objects";
+import { baseEntity } from "./base.entity";
 
 export class User extends baseEntity<string> {
   constructor(
     public id: string,
     public username: UserName,
-    public hashPassword: string,
+    public passwordHash: string,
     public email: Email,
     public nickName: string = '',
     public sex: Sex,
@@ -23,11 +23,11 @@ export class User extends baseEntity<string> {
     super(id, createdAt, updatedAt);
   }
 
-  static create(props: { username: UserName, hashPassword: string, email: Email, role: Role }): User {
+  static create(props: { username: UserName, passwordHash: string, email: Email, role: Role }): User {
     return new User(
       UUIdHelper.createUUIDv7(),
       props.username,
-      props.hashPassword.trim(),
+      props.passwordHash.trim(),
       props.email,
       '',
       Sex.male(),
@@ -41,16 +41,17 @@ export class User extends baseEntity<string> {
     );
   }
 
-  public resetPassword(newHashedPassword: string): void {
-    InvalidParameterException.ThrowIfEmptyString(newHashedPassword, "New password hash is required.");
+  public resetPassword(newPasswordHash: string): void {
+    InvalidParameterException.ThrowIfEmptyString(newPasswordHash, "New password hash is required.");
 
-    this.hashPassword = newHashedPassword;
+    this.passwordHash = newPasswordHash;
   }
 
-  public updateUserInfo(nickName: string, bio: string): void {
+  public updateUserInfo(nickName: string, sex: Sex, bio: string): void {
     InvalidParameterException.ThrowIfEmptyString(nickName, "Name is required.");
 
     this.nickName = nickName.trim();
+    this.sex = sex;
     this.bio = bio.trim();
   }
 

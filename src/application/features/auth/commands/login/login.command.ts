@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, MinLength } from "class-validator";
+import { IsNotEmpty } from "class-validator";
 
 export class LoginRequest {
   @ApiProperty({ example: 'user01' })
@@ -8,7 +8,6 @@ export class LoginRequest {
 
   @ApiProperty({ example: '123456aA' })
   @IsNotEmpty({ message: 'Password is required.' })
-  @MinLength(8, { message: 'Password must be least 8 characters.' })
   public readonly password: string;
 }
 

@@ -1,8 +1,10 @@
 import { Body, Controller, Post } from "@nestjs/common";
-import { ApiResponseFactory } from "src/api/common";
-import { ApiTags } from "@nestjs/swagger";
-import { LoginCommand, LoginRequest } from "src/application/features/auth/commands/login/login.command";
 import { CommandBus } from "@nestjs/cqrs";
+import { ApiTags } from "@nestjs/swagger";
+import { ApiResponseFactory } from "src/api/common";
+import { LoginCommand, LoginRequest } from "src/application/features/auth/commands/login/login.command";
+import { RegisterCommand, RegisterRequest } from "src/application/features/auth/commands/register/register.command";
+import { Email, Password, PhoneNumber, Sex, UserName } from "src/domain/value-objects";
 
 @ApiTags('Auth')
 @Controller('api/auth')
@@ -16,6 +18,20 @@ export class AuthController {
     const command = new LoginCommand(request.username, request.password);
     const result = await this.commandBus.execute(command);
     return ApiResponseFactory.ok(result);
+  }
+
+  @Post('register')
+  async register(@Body() request: RegisterRequest) {
+    const command = new RegisterCommand(
+      UserName.of(request.username),
+      Email.of(request.email),
+      Password.of(request.password),
+      request.nickname.trim(),
+      PhoneNumber.of(request.phoneNumber),
+      Sex.of(request.sex),
+      request.bio.trim());
+    await this.commandBus.execute(command);
+    return ApiResponseFactory.created();
   }
 
   @Post('logout')

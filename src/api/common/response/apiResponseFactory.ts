@@ -1,6 +1,6 @@
 import { Constants } from "src/common";
-import { ApiResponse } from "./apiResponse";
 import { ApiMessageDetail } from "src/common/constants";
+import { ApiResponse } from "./apiResponse";
 
 export class ApiResponseFactory {
   static ok<T>(
@@ -12,10 +12,10 @@ export class ApiResponseFactory {
   }
 
   static created<T>(
-    data: T,
+    data: T | null = null,
     message: ApiMessageDetail = Constants.ApiMessages.CREATED,
-  ): ApiResponse<T> {
-    return new ApiResponse<T>(data, 201, message.code, message.message);
+  ): ApiResponse<T | null> {
+    return new ApiResponse<T | null>(data, 201, message.code, message.message);
   }
 
   static noContent(message: ApiMessageDetail = Constants.ApiMessages.SUCCESS): ApiResponse<null> {

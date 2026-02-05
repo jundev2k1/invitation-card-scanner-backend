@@ -45,4 +45,6 @@ export class ApiMessages {
   static readonly USER_NOT_FOUND = new ApiMessageDetail('201', 'The specified user was not found.');
   static readonly USER_LOCKED = new ApiMessageDetail('202', 'The user account is currently locked or banned.');
   static readonly USER_NOT_APPROVED = new ApiMessageDetail('203', 'The user account is pending approval and cannot access the system yet.');
+  static readonly USER_EMAIL_ALREADY_EXISTS = new ApiMessageDetail('204', 'A user with the given email already exists.');
+  static readonly USER_USERNAME_ALREADY_EXISTS = new ApiMessageDetail('205', 'A user with the given username already exists.');
 }

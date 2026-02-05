@@ -8,10 +8,10 @@ export const mapToUserEntity = (data: any): User | null => {
 
   return new User(
     data.id,
-    UserName.of(data.user_name),
-    data.hash_password,
+    UserName.of(data.username),
+    data.password_hash,
     Email.of(data.email),
-    data.nickName,
+    data.nick_name,
     Sex.of(data.sex),
     PhoneNumber.of(data.phone_number),
     data.avatar_url,
