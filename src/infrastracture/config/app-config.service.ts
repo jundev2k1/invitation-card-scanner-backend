@@ -19,6 +19,6 @@ export class AppConfigService implements IAppConfig {
     return this.configService.get<string>('JWT_SECRET') || '';
   }
   get jwtExpiresIn(): number {
-    return this.configService.get<number>('JWT_EXPIRES_IN') || 3600;
+    return this.configService.get<number>('JWT_EXPIRES_IN') || 900;
   }
 }

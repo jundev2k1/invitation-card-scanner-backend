@@ -6,6 +6,7 @@ import { UserSearchItem } from "src/application/features/users/dtos/user-search-
 import { POSTGRES_POOL } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { IUserRepo } from "src/domain/interfaces/repositories/user.repo";
+import { UUID } from "uuidv7";
 import { mapToSearchResult, mapToUserEntity } from "./mapping/user.mapping";
 
 @Injectable()
@@ -21,8 +22,8 @@ export class UserRepo implements IUserRepo {
     return mapToSearchResult(data, page, pageSize);
   }
 
-  async getById(id: string): Promise<User | null> {
-    const query = sql.unsafe`SELECT * FROM get_user_by_id(${id});`;
+  async getById(id: UUID): Promise<User | null> {
+    const query = sql.unsafe`SELECT * FROM get_user_by_id(${id.toString()});`;
     const data = await this.pool.maybeOne(query);
     return data != null
       ? mapToUserEntity(data)
@@ -82,7 +83,7 @@ export class UserRepo implements IUserRepo {
       ${user.sex.value},
       ${user.bio},
       ${user.avatarUrl},
-      ${user.status},
+      ${user.status}
     );`;
     await this.pool.query(stored);
   }

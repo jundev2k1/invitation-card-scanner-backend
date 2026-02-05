@@ -6,7 +6,7 @@ import { AUTH_SERVICE, PASSWORD_HASHER, USER_REPO } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { Role } from "src/domain/value-objects";
 import { AuthService } from "src/infrastracture/auth/auth.service";
-import { UserRepo } from "src/infrastracture/repositories/user.repo";
+import { UserRepo } from "src/infrastracture/repositories";
 import { PasswordHasher } from "src/infrastracture/security";
 import { RegisterCommand } from "./register.command";
 

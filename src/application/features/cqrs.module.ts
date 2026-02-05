@@ -1,8 +1,10 @@
 import { Module } from "@nestjs/common";
 import { AuthCqrsModule } from "./auth/auth.cqrs.module";
+import { UserCqrsModule } from "./users/user.cqrs.module";
 
 const providers = [
-  AuthCqrsModule
+  AuthCqrsModule,
+  UserCqrsModule
 ];
 
 @Module({

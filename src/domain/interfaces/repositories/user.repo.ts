@@ -1,11 +1,12 @@
 import { PaginatedResult } from "src/application/common";
 import { UserSearchItem } from "src/application/features/users/dtos/user-search-item";
 import { User } from "src/domain/entities";
+import { UUID } from "uuidv7";
 
 export interface IUserRepo {
   search(keyword: string, page: number, pageSize: number): Promise<PaginatedResult<UserSearchItem>>;
 
-  getById(id: string): Promise<User | null>;
+  getById(id: UUID): Promise<User | null>;
 
   getByUsername(username: string): Promise<User | null>;
 

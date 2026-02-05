@@ -1,6 +1,7 @@
-export { default as Password } from './password';
-export { default as Email } from './email';
-export { default as PhoneNumber } from './phoneNumber';
-export { default as UserName } from './userName';
-export { default as Sex } from './sex';
-export { default as Role } from './role';
+export { default as Email } from './email.vo';
+export { default as Password } from './password.vo';
+export { default as PhoneNumber } from './phoneNumber.vo';
+export { default as Role } from './role.vo';
+export { default as Sex } from './sex.vo';
+export { default as UserName } from './username.vo';
+

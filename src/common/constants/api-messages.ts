@@ -5,14 +5,14 @@ export class ApiMessageDetail {
 export class ApiMessages {
   // System Errors
   static readonly SYSTEM_ERROR = new ApiMessageDetail('001', 'A system error has occurred. Please try again later.');
-  static readonly UNAUTHORIZED = new ApiMessageDetail('002', 'You are not authorized to perform this action.');
-  static readonly FORBIDDEN = new ApiMessageDetail('003', 'Access to this resource is forbidden.');
+  static readonly UNAUTHORIZED = new ApiMessageDetail('002', 'You must be logged in to continue.');
+  static readonly FORBIDDEN = new ApiMessageDetail('003', 'You do not have permission to access this resource.');
   static readonly NOT_FOUND = new ApiMessageDetail('004', 'The requested resource was not found.');
   static readonly CONFLICT = new ApiMessageDetail('005', 'The request could not be completed due to a conflict with the current state of the resource.');
-  static readonly RATE_LIMIT_EXCEEDED = new ApiMessageDetail('006', 'Rate limit exceeded. Please try again later.');
+  static readonly TOO_MANY_REQUESTS = new ApiMessageDetail('006', 'Too many requests have been made. Please try again later.');
   static readonly DEPENDENCY_FAILURE = new ApiMessageDetail('007', 'A dependent service failed to respond correctly.');
   static readonly BUSSINESS_RULE_VIOLATION = new ApiMessageDetail('008', 'The request violates a business rule.');
-  static readonly VALIDATION_ERROR = new ApiMessageDetail('009', 'One or more validation errors occurred.');
+  static readonly VALIDATION_ERROR = new ApiMessageDetail('009', 'One or more validation failures occurred.');
   static readonly INVALID_STATE = new ApiMessageDetail('010', 'The request is in an invalid state.');
   static readonly INVALID_PARAMETER = new ApiMessageDetail('011', 'One or more parameters are invalid.');
   static readonly INVALID_FORMAT = new ApiMessageDetail('012', 'The format of the provided data is invalid.');

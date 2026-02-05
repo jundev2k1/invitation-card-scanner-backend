@@ -7,7 +7,7 @@ import { User } from "src/domain/entities";
 import { UserStatus } from "src/domain/enums";
 import { IAuthService } from "src/domain/interfaces/auth/auth.service";
 import { Password } from "src/domain/value-objects";
-import { UserRepo } from "../repositories/user.repo";
+import { UserRepo } from "../repositories";
 import { PasswordHasher } from "../security";
 
 export class AuthService implements IAuthService {
@@ -39,7 +39,7 @@ export class AuthService implements IAuthService {
     }
 
     // Generate access token
-    const tokenPayload = { sub: user?.id, username: user?.username };
+    const tokenPayload = { sub: user?.id, role: user?.role.value };
     return [await this.jwtService.signAsync(tokenPayload), user];
   }
 
