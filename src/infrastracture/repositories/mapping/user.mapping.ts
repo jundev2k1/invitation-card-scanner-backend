@@ -24,7 +24,6 @@ export const mapToUserEntity = (data: any): User | null => {
 }
 
 export const mapToSearchResult = (data: readonly any[], page: number, pageSize: number): PaginatedResult<UserSearchItem> => {
-  debugger
   const items = data.map(i => new UserSearchItem(
     i.id,
     i.username,

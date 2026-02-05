@@ -19,7 +19,6 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
   ) { }
 
   async execute(request: RegisterCommand): Promise<void> {
-    console.log(request);
     // Check if email exists
     const isExistEmail = await this.userRepo.isExistEmail(request.email.value);
     if (isExistEmail) throw BadRequestException.create(ApiMessages.USER_EMAIL_ALREADY_EXISTS);

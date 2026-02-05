@@ -19,7 +19,6 @@ export class UserRepo implements IUserRepo {
     const limit = (page - 1) * pageSize;
     const query = sql.unsafe`SELECT * FROM search_users_by_criteria(${keyword.trim()},${limit},${pageSize})`;
     const data = await this.pool.query(query);
-    console.log(data);
     return mapToSearchResult(data.rows, page, pageSize);
   }
 
