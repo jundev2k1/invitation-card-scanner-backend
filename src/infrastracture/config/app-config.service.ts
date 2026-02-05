@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { StringValue } from 'ms';
 import { IAppConfig } from '../../domain/interfaces/configs/config.interface';
 
 @Injectable()
@@ -18,7 +19,7 @@ export class AppConfigService implements IAppConfig {
   get jwtSecret(): string {
     return this.configService.get<string>('JWT_SECRET') || '';
   }
-  get jwtExpiresIn(): number {
-    return this.configService.get<number>('JWT_EXPIRES_IN') || 900;
+  get jwtExpiresIn(): StringValue {
+    return this.configService.get<StringValue>('JWT_EXPIRES_IN') || '900s';
   }
 }

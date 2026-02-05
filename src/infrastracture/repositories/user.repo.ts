@@ -16,10 +16,11 @@ export class UserRepo implements IUserRepo {
   ) { }
 
   async search(keyword: string, page: number, pageSize: number): Promise<PaginatedResult<UserSearchItem>> {
-    const limit = page * pageSize;
+    const limit = (page - 1) * pageSize;
     const query = sql.unsafe`SELECT * FROM search_users_by_criteria(${keyword.trim()},${limit},${pageSize})`;
-    const data = await this.pool.many(query);
-    return mapToSearchResult(data, page, pageSize);
+    const data = await this.pool.query(query);
+    console.log(data);
+    return mapToSearchResult(data.rows, page, pageSize);
   }
 
   async getById(id: UUID): Promise<User | null> {

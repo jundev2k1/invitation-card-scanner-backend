@@ -22,8 +22,8 @@ CREATE INDEX IF NOT EXISTS idx_users_status ON users("status");
 
 CREATE OR REPLACE FUNCTION search_users_by_criteria(
   p_keyword VARCHAR,
-  p_limit INT,
-  p_offset INT
+  p_offset INT,
+  p_limit INT
 )
 RETURNS TABLE (
   id UUID,
@@ -36,7 +36,7 @@ RETURNS TABLE (
   "status" SMALLINT,
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
-  total_count BIGINT
+  total_count INT
 ) 
 LANGUAGE plpgsql AS $$
 BEGIN
@@ -51,10 +51,15 @@ BEGIN
           u.status,
           u.created_at,
           u.updated_at,
-          COUNT(*) OVER() AS total_count
+          (COUNT(*) OVER())::int AS total_count
     FROM  users u
-   WHERE  (u.username ILIKE '%' || p_keyword || '%' OR u.email ILIKE '%' || p_keyword || '%')
-     AND  u.is_active = TRUE
+   WHERE  u.role <> 'ROOT'
+     AND  (
+            p_keyword IS NULL
+            OR p_keyword = ''
+            OR (u.username ILIKE '%' || p_keyword || '%'
+            OR u.email ILIKE '%' || p_keyword || '%')
+          )
   ORDER BY u.created_at DESC
    LIMIT  p_limit OFFSET p_offset;
 END;
