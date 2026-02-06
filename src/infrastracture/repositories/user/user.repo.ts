@@ -7,7 +7,7 @@ import { POSTGRES_POOL } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { IUserRepo } from "src/domain/interfaces/repositories/user.repo";
 import { UUID } from "uuidv7";
-import { mapToSearchResult, mapToUserEntity } from "./mapping/user.mapping";
+import { mapToSearchResult, mapToUserEntity } from "./user.mapping";
 
 @Injectable()
 export class UserRepo implements IUserRepo {
