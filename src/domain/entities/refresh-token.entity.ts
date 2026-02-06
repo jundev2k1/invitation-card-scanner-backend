@@ -9,7 +9,7 @@ export class RefreshToken extends baseEntity<string> {
     public tokenHash: string,
     public jwtId: string,
     public isRevoked: boolean,
-    public expiredAt: Date,
+    public expiresAt: Date,
     public replacedByToken: string | null = null,
     public ipAddress: string = '',
     public userAgent: string = '',
@@ -22,7 +22,7 @@ export class RefreshToken extends baseEntity<string> {
   static create(
     userId: string,
     jwtId: string,
-    expiredAt: Date,
+    expiresAt: Date,
     ipAddress: string,
     userAgent: string,
     deviceName: string
@@ -33,7 +33,7 @@ export class RefreshToken extends baseEntity<string> {
       this.createTokenHash(),
       jwtId,
       false,
-      expiredAt,
+      expiresAt,
       null,
       ipAddress,
       userAgent,
