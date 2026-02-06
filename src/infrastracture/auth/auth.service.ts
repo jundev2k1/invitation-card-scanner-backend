@@ -3,18 +3,20 @@ import { JwtService } from "@nestjs/jwt";
 import { BadRequestException } from "src/application/common";
 import { UUIdHelper } from "src/common";
 import { ApiMessages } from "src/common/constants";
-import { PASSWORD_HASHER, REPO_FACADE } from "src/common/tokens";
-import { User } from "src/domain/entities";
+import { PASSWORD_HASHER, REFRESH_TOKEN_GENERATOR, REPO_FACADE, USER_ACCESSOR } from "src/common/tokens";
+import { RefreshToken, User } from "src/domain/entities";
 import { UserStatus } from "src/domain/enums";
 import { IAuthService } from "src/domain/interfaces/auth/auth.service";
 import { Password } from "src/domain/value-objects";
 import { RepositoryFacade } from "../repositories";
-import { PasswordHasher } from "../security";
+import { PasswordHasher, RefreshTokenGenerator, UserAccessor } from "../security";
 
 export class AuthService implements IAuthService {
   constructor(
+    @Inject(USER_ACCESSOR) private readonly userAccessor: UserAccessor,
     @Inject(REPO_FACADE) private readonly repoFacade: RepositoryFacade,
     @Inject(PASSWORD_HASHER) private readonly passwordHasher: PasswordHasher,
+    @Inject(REFRESH_TOKEN_GENERATOR) private readonly tokenGenerator: RefreshTokenGenerator,
     private readonly jwtService: JwtService) { }
 
   async login(username: string, rawPassword: Password): Promise<[string, string, User]> {
@@ -60,5 +62,17 @@ export class AuthService implements IAuthService {
     } catch {
       return false;
     }
+  }
+
+  async generateRefreshToken(userId: string, jwtId: string): Promise<string> {
+    // Generate refresh token
+    const [token, expiryDate] = await this.tokenGenerator.generate();
+    
+    // Create refresh token
+    const { ip, userAgent, device } = this.userAccessor.metaData;
+    const refreshToken = RefreshToken.create(userId, token, jwtId, expiryDate, ip, userAgent, device);
+    this.repoFacade.refreshToken.create(refreshToken);
+
+    return token;
   }
 }
