@@ -3,6 +3,7 @@ import { CommandBus } from "@nestjs/cqrs";
 import { ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "src/api/common";
 import { LoginCommand, LoginRequest } from "src/application/features/auth/commands/login/login.command";
+import { RefreshTokenCommand, RefreshTokenRequest } from "src/application/features/auth/commands/refresh-token/refresh-token.command";
 import { RegisterCommand, RegisterRequest } from "src/application/features/auth/commands/register/register.command";
 import { Email, Password, PhoneNumber, Sex, UserName } from "src/domain/value-objects";
 
@@ -40,7 +41,10 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  async refreshToken() {
-    return ApiResponseFactory.noContent();
+  async refreshToken(@Body() request: RefreshTokenRequest) {
+    console.log(request);
+    const command = new RefreshTokenCommand(request.accessToken, request.refreshToken);
+    const result = await this.commandBus.execute(command);
+    return ApiResponseFactory.ok(result);
   }
 }

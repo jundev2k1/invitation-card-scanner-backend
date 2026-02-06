@@ -22,7 +22,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
       Password.of(request.password));
 
     // Create a new refresh token
-    const refreshToken = await this.authService.generateRefreshToken(userInfo.id, jwtId);
+    const [_, refreshToken] = await this.authService.generateRefreshToken(userInfo.id, jwtId);
 
     return new LoginResult(
       token,

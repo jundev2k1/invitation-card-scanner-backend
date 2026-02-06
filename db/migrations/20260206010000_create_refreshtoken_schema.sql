@@ -137,7 +137,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
   UPDATE  refresh_tokens
-     SET  replaced_by_token_id = p_replaced_by_token_id
+     SET  replaced_by_token_id = p_replaced_by_token_id,
+          is_revoked = TRUE
    WHERE  id = p_id;
 END;
 $$;
@@ -165,7 +166,7 @@ END;
 $$;
 
 -- migrate:down
-DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS refresh_tokens CASCADE;
 
 DROP INDEX IF EXISTS idx_refresh_tokens_token_hash;
 DROP INDEX IF EXISTS idx_refresh_tokens_user_id;

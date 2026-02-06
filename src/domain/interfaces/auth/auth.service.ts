@@ -6,5 +6,9 @@ export interface IAuthService {
 
   logout(token: string): Promise<void>;
 
-  validateToken(token: string): Promise<boolean>;
+  signAccessToken(userId: string, jwtId: string, role: string): Promise<string>;
+
+  validateToken(accessToken: string, refreshToken: string): Promise<{ tokenId: string, userId: string, role: string} | null>;
+
+  generateRefreshToken(userId: string, jwtId: string): Promise<[string, string]>;
 }
