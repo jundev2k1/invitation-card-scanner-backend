@@ -21,6 +21,7 @@ export class LoginCommand {
 export class LoginResult {
   constructor(
     public readonly accessToken: string,
+    public readonly refreshToken: string,
     public readonly role: string
   ) { }
 }

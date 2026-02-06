@@ -1,3 +1,4 @@
 export const PASSWORD_HASHER = Symbol("PASSWORD_HASHER");
 export const AUTH_SERVICE = Symbol("AUTH_SERVICE");
 export const USER_ACCESSOR = Symbol("USER_ACCESSOR");
+export const REFRESH_TOKEN_GENERATOR = Symbol("REFRESH_TOKEN_GENERATOR");

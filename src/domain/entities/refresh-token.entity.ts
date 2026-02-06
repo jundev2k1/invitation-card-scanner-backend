@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import { UUIdHelper } from "src/common";
 import { baseEntity } from "./base.entity";
 
@@ -21,6 +20,7 @@ export class RefreshToken extends baseEntity<string> {
 
   static create(
     userId: string,
+    tokenHash: string,
     jwtId: string,
     expiresAt: Date,
     ipAddress: string,
@@ -30,7 +30,7 @@ export class RefreshToken extends baseEntity<string> {
     return new RefreshToken(
       UUIdHelper.createUUIDv7(),
       userId,
-      this.createTokenHash(),
+      tokenHash,
       jwtId,
       false,
       expiresAt,
@@ -40,9 +40,5 @@ export class RefreshToken extends baseEntity<string> {
       deviceName,
       new Date()
     );
-  }
-
-  static createTokenHash(): string {
-    return createHash('sha256').update(UUIdHelper.createUUIDv7()).digest('hex');
   }
 }

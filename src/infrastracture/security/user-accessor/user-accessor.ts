@@ -22,14 +22,26 @@ export class UserAccessor {
   }
 
   get ipAddress(): string {
-    return (
-      (this.request.headers['x-forwarded-for'] as string) ||
-      this.request.socket.remoteAddress ||
-      ''
-    );
+    const forwarded = this.request?.headers?.['x-forwarded-for'];
+    if (forwarded)
+      return typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : forwarded[0];
+
+    return this.request?.ip || this.request?.socket?.remoteAddress || '';
   }
 
   get userAgent(): string {
-    return this.request.headers['user-agent'] as string || '';
+    return this.request?.headers?.['user-agent'] || '';
+  }
+
+  get device(): string {
+    return this.request?.headers?.['device'] as string || 'unknown';
+  }
+
+  get metaData() {
+    return {
+      ip: this.ipAddress,
+      userAgent: this.userAgent,
+      device: this.device
+    };
   }
 }
