@@ -3,23 +3,22 @@ import { JwtService } from "@nestjs/jwt";
 import { BadRequestException } from "src/application/common";
 import { UUIdHelper } from "src/common";
 import { ApiMessages } from "src/common/constants";
-import { PASSWORD_HASHER, USER_REPO } from "src/common/tokens";
+import { PASSWORD_HASHER, REPO_FACADE } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { UserStatus } from "src/domain/enums";
 import { IAuthService } from "src/domain/interfaces/auth/auth.service";
 import { Password } from "src/domain/value-objects";
-import { UserRepo } from "../repositories";
+import { RepositoryFacade } from "../repositories";
 import { PasswordHasher } from "../security";
-import { JwtPayload } from "./jwt.payload";
 
 export class AuthService implements IAuthService {
   constructor(
-    @Inject(USER_REPO) private readonly userRepo: UserRepo,
+    @Inject(REPO_FACADE) private readonly repoFacade: RepositoryFacade,
     @Inject(PASSWORD_HASHER) private readonly passwordHasher: PasswordHasher,
     private readonly jwtService: JwtService) { }
 
   async login(username: string, rawPassword: Password): Promise<[string, string, User]> {
-    const user = await this.userRepo.getByUsername(username);
+    const user = await this.repoFacade.user.getByUsername(username);
     if (!user) throw BadRequestException.create(ApiMessages.INVALID_CREDENTIALS);
 
     // Validate password
@@ -42,7 +41,11 @@ export class AuthService implements IAuthService {
 
     // Generate access token
     const jwtId = UUIdHelper.createUUIDv7();
-    const tokenPayload = new JwtPayload(user?.id, jwtId, user?.role.value);
+    const tokenPayload = {
+      sub: user?.id,
+      jti: jwtId,
+      role: user?.role.value
+    };
     return [await this.jwtService.signAsync(tokenPayload), jwtId, user];
   }
 

@@ -1,14 +1,20 @@
 import { Inject } from "@nestjs/common";
-import { sql, type DatabasePool } from "slonik";
+import { DatabaseTransactionConnection, sql, type DatabasePool } from "slonik";
 import { POSTGRES_POOL } from "src/common/tokens";
 import { RefreshToken } from "src/domain/entities";
 import { IRefreshTokenRepo } from "src/domain/interfaces/repositories/refresh-token.repo";
+import { transactionStorage } from "src/infrastracture/database/unit-of-work/transaction-storage";
 import { mapToRefreshTokenEntity } from "./refresh-token.mapping";
 
 export class RefreshTokenRepo implements IRefreshTokenRepo {
+  // Database context
+  private readonly dbContext: DatabaseTransactionConnection | DatabasePool;
+
   constructor(
     @Inject(POSTGRES_POOL) private readonly pool: DatabasePool
-  ) { }
+  ) {
+    this.dbContext = transactionStorage.getStore() || pool;
+  }
 
   async getsWithPagination(page: number, pageSize: number): Promise<RefreshToken[]> {
     const limit = (page - 1) * pageSize;

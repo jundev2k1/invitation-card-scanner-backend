@@ -1,2 +1,1 @@
-export * from './user/user.repo';
-
+export * from './repository-facade';

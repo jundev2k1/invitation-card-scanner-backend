@@ -1,30 +1,36 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { DatabasePool } from 'slonik';
+import type { DatabasePool, DatabaseTransactionConnection } from 'slonik';
 import { sql } from 'slonik';
 import { PaginatedResult } from "src/application/common";
 import { UserSearchItem } from "src/application/features/users/dtos/user-search-item.dto";
 import { POSTGRES_POOL } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { IUserRepo } from "src/domain/interfaces/repositories/user.repo";
+import { transactionStorage } from "src/infrastracture/database/unit-of-work/transaction-storage";
 import { UUID } from "uuidv7";
 import { mapToSearchResult, mapToUserEntity } from "./user.mapping";
 
 @Injectable()
 export class UserRepo implements IUserRepo {
+  // Database context
+  private readonly dbContext: DatabaseTransactionConnection | DatabasePool;
+
   constructor(
     @Inject(POSTGRES_POOL) private readonly pool: DatabasePool
-  ) { }
+  ) {
+    this.dbContext = transactionStorage.getStore() || pool;
+  }
 
   async search(keyword: string, page: number, pageSize: number): Promise<PaginatedResult<UserSearchItem>> {
     const limit = (page - 1) * pageSize;
     const query = sql.unsafe`SELECT * FROM search_users_by_criteria(${keyword.trim()},${limit},${pageSize})`;
-    const data = await this.pool.query(query);
+    const data = await this.dbContext.query(query);
     return mapToSearchResult(data.rows, page, pageSize);
   }
 
   async getById(id: UUID): Promise<User | null> {
     const query = sql.unsafe`SELECT * FROM get_user_by_id(${id.toString()});`;
-    const data = await this.pool.maybeOne(query);
+    const data = await this.dbContext.maybeOne(query);
     return data != null
       ? mapToUserEntity(data)
       : null;
@@ -32,7 +38,7 @@ export class UserRepo implements IUserRepo {
 
   async getByUsername(username: string): Promise<User | null> {
     const query = sql.unsafe`SELECT * FROM get_user_by_username(${username});`;
-    const data = await this.pool.maybeOne(query);
+    const data = await this.dbContext.maybeOne(query);
     return data != null
       ? mapToUserEntity(data)
       : null;
@@ -40,7 +46,7 @@ export class UserRepo implements IUserRepo {
 
   async getByEmail(email: string): Promise<User | null> {
     const query = sql.unsafe`SELECT * FROM get_user_by_email(${email});`;
-    const data = await this.pool.maybeOne(query);
+    const data = await this.dbContext.maybeOne(query);
     return data != null
       ? mapToUserEntity(data)
       : null;
@@ -48,12 +54,12 @@ export class UserRepo implements IUserRepo {
 
   async isExistUsername(username: string): Promise<boolean> {
     const query = sql.unsafe`SELECT check_user_exists_by_username(${username});`;
-    return await this.pool.oneFirst(query);
+    return await this.dbContext.oneFirst(query);
   }
 
   async isExistEmail(email: string): Promise<boolean> {
     const query = sql.unsafe`SELECT check_user_exists_by_email(${email});`;
-    return await this.pool.oneFirst(query);
+    return await this.dbContext.oneFirst(query);
   }
 
   async create(user: User): Promise<void> {
@@ -70,7 +76,7 @@ export class UserRepo implements IUserRepo {
       ${user.status},
       ${user.role.value}
     );`;
-    await this.pool.query(stored);
+    await this.dbContext.query(stored);
   }
 
   async update(user: User): Promise<void> {
@@ -85,6 +91,6 @@ export class UserRepo implements IUserRepo {
       ${user.avatarUrl},
       ${user.status}
     );`;
-    await this.pool.query(stored);
+    await this.dbContext.query(stored);
   }
 }
