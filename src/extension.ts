@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppExceptionFilter } from "./api/filters";
 import { BadRequestException } from "./application/common";
 import { ApiMessages } from "./common/constants";
+import { AppConfigService } from "./infrastracture/config/app-config.service";
 
 export const useInputValidations = (app: INestApplication) => {
   app.useGlobalPipes(new ValidationPipe({
@@ -49,4 +50,12 @@ export const useSwagger = (app: INestApplication) => {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
+}
+
+export const useCors = (app: INestApplication, configuration: AppConfigService) => {
+  app.enableCors({
+    origin: configuration.allowedOrigins,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 }

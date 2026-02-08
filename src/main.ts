@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import 'dotenv/config';
 import { AppModule } from './app.module';
 import { APP_CONFIG } from './common/tokens';
-import { useFilters, useInputValidations, useSwagger } from './extension';
+import { useCors, useFilters, useInputValidations, useSwagger } from './extension';
 import { AppConfigService } from './infrastracture/config/app-config.service';
 
 async function bootstrap() {
@@ -17,6 +17,7 @@ async function bootstrap() {
   useSwagger(app);
   useFilters(app);
   useInputValidations(app);
+  useCors(app, configService);
 
   // Start the application
   await app.listen(configService.port);

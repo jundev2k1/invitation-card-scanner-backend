@@ -15,6 +15,11 @@ export class AppConfigService implements IAppConfig {
   get port(): number {
     return this.configService.get<number>('PORT') || 3000;
   }
+  /** The allowed origins for CORS */
+  get allowedOrigins(): string[] {
+    const allowedOrigins = this.configService.get<string>('ALLOWED_ORIGINS') || '';
+    return allowedOrigins.split(',');
+  }
   /** The database connection string */
   get databaseUrl(): string {
     return this.configService.get<string>('DATABASE_URL') || '';
