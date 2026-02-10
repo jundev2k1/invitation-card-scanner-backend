@@ -24,9 +24,9 @@ export class UserBackofficeController {
   @Permission(Role.admin)
   async getUserList(@Query() parameters: GetUserListRequest) {
     const query = new GetUserListQuery(
-      parameters.keyword || '',
-      parameters.page || 1,
-      parameters.pageSize || 20
+      parameters.keyword!,
+      parameters.page!,
+      parameters.pageSize!
     );
     const result = await this.queryBus.execute(query);
     return ApiResponseFactory.ok(result);

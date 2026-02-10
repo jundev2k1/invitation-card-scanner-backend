@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import 'dotenv/config';
 import { AppModule } from './app.module';
@@ -18,6 +19,11 @@ async function bootstrap() {
   useFilters(app);
   useInputValidations(app);
   useCors(app, configService);
+
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true,
+    transformOptions: { enableImplicitConversion: true },
+  }));
 
   // Start the application
   await app.listen(configService.port);
