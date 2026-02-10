@@ -1,0 +1,122 @@
+-- migrate:up
+-- Table: event_card_logs
+CREATE TABLE IF NOT EXISTS event_card_logs (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  card_id UUID NOT NULL REFERENCES event_cards(id) ON DELETE CASCADE,
+  scanned_by UUID NOT NULL REFERENCES users(id),
+  scanned_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  note TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_card_logs_card ON event_card_logs(card_id);
+CREATE INDEX IF NOT EXISTS idx_event_card_logs_scanned_by ON event_card_logs(scanned_by);
+CREATE INDEX IF NOT EXISTS idx_event_card_logs_scanned_at ON event_card_logs(scanned_at);
+
+-- Function
+CREATE OR REPLACE FUNCTION get_event_card_logs_by_criteria
+(
+  p_card_id UUID,
+  p_scanned_by UUID,
+  p_scanned_from TIMESTAMPTZ,
+  p_scanned_to TIMESTAMPTZ,
+  p_offset INT,
+  p_limit INT
+)
+RETURNS TABLE (
+  id UUID,
+  card_id UUID,
+  scanned_by UUID,
+  scanned_at TIMESTAMPTZ,
+  note TEXT,
+  total_count INT
+) 
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+  SELECT  id,
+          card_id,
+          scanned_by,
+          scanned_at,
+          note, 
+          COUNT(*) OVER () AS total_count
+    FROM  event_card_logs
+   WHERE  (
+            p_card_id IS NULL
+            OR
+            card_id = p_card_id
+          )
+     AND  (
+            p_scanned_by IS NULL
+            OR
+            scanned_by = p_scanned_by
+          )
+     AND  (
+            p_scanned_from IS NULL
+            OR
+            p_scanned_from <= scanned_at
+          )
+     AND  (
+            p_scanned_to IS NULL
+            OR
+            p_scanned_to >= scanned_at
+          )
+  ORDER BY scanned_at DESC
+   LIMIT  p_limit
+  OFFSET  p_offset;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION create_event_card_log
+(
+  p_card_id UUID,
+  p_scanned_by UUID,
+  p_note TEXT
+)
+RETURNS UUID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  INSERT INTO event_card_logs (card_id, scanned_by, note)
+  VALUES (p_card_id, p_scanned_by, p_note)
+  RETURNING id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION update_event_card_log
+(
+  p_id UUID,
+  p_note TEXT
+)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  UPDATE  event_card_logs
+     SET  note = p_note
+   WHERE  id = p_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION delete_event_card_log(p_id UUID)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  DELETE FROM event_card_logs WHERE id = p_id;
+END;
+$$;
+
+-- migrate:down
+DROP TABLE IF EXISTS event_card_logs CASCADE;
+
+DROP INDEX IF EXISTS idx_event_card_logs_card;
+DROP INDEX IF EXISTS idx_event_card_logs_scanned_by;
+DROP INDEX IF EXISTS idx_event_card_logs_scanned_at;
+
+DROP FUNCTION IF EXISTS get_event_card_logs_by_criteria;
+DROP FUNCTION IF EXISTS create_event_card_log;
+DROP FUNCTION IF EXISTS update_event_card_log;
+DROP FUNCTION IF EXISTS delete_event_card_log;
+
+DROP TRIGGER IF EXISTS trg_event_card_logs_search_update;
+DROP FUNCTION IF EXISTS event_card_logs_search_vector_trigger;
