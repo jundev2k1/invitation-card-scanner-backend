@@ -13,13 +13,32 @@ CREATE TABLE IF NOT EXISTS users (
   "status" SMALLINT DEFAULT 0,
   "role" VARCHAR(20) CHECK ("role" IN ('ROOT', 'ADMIN', 'STAFF')) NOT NULL DEFAULT 'STAFF',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  search_vector tsvector
 );
 
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_status ON users("status");
 
+-- Search Vector
+CREATE OR REPLACE FUNCTION users_search_vector_trigger() RETURNS trigger AS $$
+BEGIN
+  NEW.search_vector :=
+    setweight(to_tsvector('simple', coalesce(NEW.username, '')), 'A') ||
+    setweight(to_tsvector('simple', coalesce(NEW.nickname, '')), 'B') ||
+    setweight(to_tsvector('simple', coalesce(NEW.email, '')), 'C') ||
+    setweight(to_tsvector('simple', coalesce(NEW.phone_number, '')), 'D');
+  RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_users_search_update ON users;
+CREATE TRIGGER trg_users_search_update
+BEFORE INSERT OR UPDATE ON users
+FOR EACH ROW EXECUTE FUNCTION users_search_vector_trigger();
+
+-- Function
 CREATE OR REPLACE FUNCTION search_users_by_criteria(
   p_keyword VARCHAR,
   p_offset INT,
@@ -54,12 +73,7 @@ BEGIN
           (COUNT(*) OVER())::int AS total_count
     FROM  users u
    WHERE  u.role <> 'ROOT'
-     AND  (
-            p_keyword IS NULL
-            OR p_keyword = ''
-            OR (u.username ILIKE '%' || p_keyword || '%'
-            OR u.email ILIKE '%' || p_keyword || '%')
-          )
+     AND  search_vector @@ plainto_tsquery('simple', p_keyword)
   ORDER BY u.created_at DESC
    LIMIT  p_limit OFFSET p_offset;
 END;
@@ -212,3 +226,5 @@ DROP FUNCTION IF EXISTS get_user_by_email;
 DROP FUNCTION IF EXISTS search_users_by_criteria;
 DROP FUNCTION IF EXISTS check_user_exists_by_username;
 DROP FUNCTION IF EXISTS check_user_exists_by_email;
+
+DROP TRIGGER IF EXISTS trg_users_search_update ON users;
