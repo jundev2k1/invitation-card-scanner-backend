@@ -1,6 +1,7 @@
 -- migrate:up
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS users
+(
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
   email VARCHAR(50) UNIQUE NOT NULL,
@@ -22,7 +23,8 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_status ON users("status");
 
 -- Search Vector
-CREATE OR REPLACE FUNCTION users_search_vector_trigger() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION users_search_vector_trigger()
+RETURNS trigger AS $$
 BEGIN
   NEW.search_vector :=
     setweight(to_tsvector('simple', coalesce(NEW.username, '')), 'A') ||
@@ -39,12 +41,14 @@ BEFORE INSERT OR UPDATE ON users
 FOR EACH ROW EXECUTE FUNCTION users_search_vector_trigger();
 
 -- Function
-CREATE OR REPLACE FUNCTION search_users_by_criteria(
+CREATE OR REPLACE FUNCTION search_users_by_criteria
+(
   p_keyword VARCHAR,
   p_offset INT,
   p_limit INT
 )
-RETURNS TABLE (
+RETURNS TABLE
+(
   id UUID,
   username VARCHAR,
   email VARCHAR,
@@ -79,10 +83,12 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_user_by_email(p_email VARCHAR)
+CREATE OR REPLACE FUNCTION get_user_by_email
+(
+  p_email VARCHAR
+)
 RETURNS SETOF users
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
 
@@ -92,10 +98,12 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_user_by_username(p_username VARCHAR)
+CREATE OR REPLACE FUNCTION get_user_by_username
+(
+  p_username VARCHAR
+)
 RETURNS SETOF users
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
 
@@ -105,10 +113,12 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_user_by_id(p_id UUID)
+CREATE OR REPLACE FUNCTION get_user_by_id
+(
+  p_id UUID
+)
 RETURNS SETOF users
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
 
@@ -118,25 +128,30 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION check_user_exists_by_username(p_username VARCHAR)
+CREATE OR REPLACE FUNCTION check_user_exists_by_username
+(
+  p_username VARCHAR
+)
 RETURNS BOOLEAN
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN EXISTS(SELECT 1 FROM users WHERE username = p_username);
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION check_user_exists_by_email(p_email VARCHAR)
+CREATE OR REPLACE FUNCTION check_user_exists_by_email
+(
+  p_email VARCHAR
+)
 RETURNS BOOLEAN
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN EXISTS(SELECT 1 FROM users WHERE email = p_email);
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_user(
+CREATE OR REPLACE FUNCTION create_user
+(
   p_id UUID,
   p_username VARCHAR,
   p_email VARCHAR,
@@ -147,12 +162,13 @@ CREATE OR REPLACE FUNCTION create_user(
   p_bio VARCHAR,
   p_avatar_url VARCHAR,
   p_status SMALLINT,
-  p_role VARCHAR)
+  p_role VARCHAR
+)
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
-  INSERT INTO users (
+  INSERT INTO users
+  (
     id,
     username,
     email,
@@ -165,8 +181,10 @@ BEGIN
     "status",
     "role",
     created_at,
-    updated_at)
-  VALUES (
+    updated_at
+  )
+  VALUES
+  (
     p_id,
     p_username,
     p_email,
@@ -179,11 +197,13 @@ BEGIN
     p_status,
     p_role,
     CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP);
+    CURRENT_TIMESTAMP
+  );
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION update_user(
+CREATE OR REPLACE FUNCTION update_user
+(
   p_id UUID,
   p_email VARCHAR,
   p_nickname VARCHAR,
@@ -192,10 +212,10 @@ CREATE OR REPLACE FUNCTION update_user(
   p_sex CHAR,
   p_bio VARCHAR,
   p_avatar_url VARCHAR,
-  p_status SMALLINT)
+  p_status SMALLINT
+)
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   UPDATE  users
      SET  nickname = p_nickname,

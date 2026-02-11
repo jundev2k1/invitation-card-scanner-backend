@@ -1,6 +1,9 @@
 -- migrate:up
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- Table: event_card_logs
-CREATE TABLE IF NOT EXISTS event_card_logs (
+CREATE TABLE IF NOT EXISTS event_card_logs
+(
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   card_id UUID NOT NULL REFERENCES event_cards(id) ON DELETE CASCADE,
   scanned_by UUID NOT NULL REFERENCES users(id),
@@ -22,7 +25,8 @@ CREATE OR REPLACE FUNCTION get_event_card_logs_by_criteria
   p_offset INT,
   p_limit INT
 )
-RETURNS TABLE (
+RETURNS TABLE
+(
   id UUID,
   card_id UUID,
   scanned_by UUID,
@@ -73,11 +77,20 @@ CREATE OR REPLACE FUNCTION create_event_card_log
   p_note TEXT
 )
 RETURNS UUID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
-  INSERT INTO event_card_logs (card_id, scanned_by, note)
-  VALUES (p_card_id, p_scanned_by, p_note)
+  INSERT INTO event_card_logs
+  (
+    card_id,
+    scanned_by,
+    note
+  )
+  VALUES
+  (
+    p_card_id,
+    p_scanned_by,
+    p_note
+  )
   RETURNING id;
 END;
 $$;
@@ -88,8 +101,7 @@ CREATE OR REPLACE FUNCTION update_event_card_log
   p_note TEXT
 )
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   UPDATE  event_card_logs
      SET  note = p_note
@@ -97,10 +109,12 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION delete_event_card_log(p_id UUID)
+CREATE OR REPLACE FUNCTION delete_event_card_log
+(
+  p_id UUID
+)
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   DELETE FROM event_card_logs WHERE id = p_id;
 END;

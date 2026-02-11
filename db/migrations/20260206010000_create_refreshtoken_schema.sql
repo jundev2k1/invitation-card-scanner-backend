@@ -1,7 +1,7 @@
 -- migrate:up
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-CREATE TABLE IF NOT EXISTS refresh_tokens (
+CREATE TABLE IF NOT EXISTS refresh_tokens
+(
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
   token_hash TEXT NOT NULL,
@@ -18,12 +18,14 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 CREATE INDEX idx_refresh_tokens_token_hash ON refresh_tokens (token_hash);
 CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens (user_id);
 
-CREATE OR REPLACE FUNCTION get_refresh_tokens_by_user_id_with_pagination(
+CREATE OR REPLACE FUNCTION get_refresh_tokens_by_user_id_with_pagination
+(
   p_user_id UUID,
   p_offset INT,
   p_limit INT
 )
-RETURNS TABLE (
+RETURNS TABLE
+(
   id UUID,
   user_id UUID,
   token_hash TEXT,
@@ -37,8 +39,7 @@ RETURNS TABLE (
   created_at TIMESTAMPTZ,
   total_count INT
 )
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
   SELECT  *, (COUNT(*) OVER())::int AS total_count
@@ -49,10 +50,12 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_refresh_tokens_by_user_id(p_user_id UUID)
+CREATE OR REPLACE FUNCTION get_refresh_tokens_by_user_id
+(
+  p_user_id UUID
+)
 RETURNS SETOF refresh_tokens
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
   SELECT  *
@@ -63,8 +66,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION get_refresh_token_by_token_hash(p_token_hash TEXT)
 RETURNS SETOF refresh_tokens
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
   SELECT  *
@@ -73,10 +75,12 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_active_refresh_tokens_by_user_id(p_id UUID)
+CREATE OR REPLACE FUNCTION get_active_refresh_tokens_by_user_id
+(
+  p_id UUID
+)
 RETURNS SETOF refresh_tokens
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
   SELECT  *
@@ -87,7 +91,8 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_refresh_token(
+CREATE OR REPLACE FUNCTION create_refresh_token
+(
   p_id UUID,
   p_user_id UUID,
   p_token_hash TEXT,
@@ -97,12 +102,13 @@ CREATE OR REPLACE FUNCTION create_refresh_token(
   p_replaced_by_token_id UUID,
   p_ip_address TEXT,
   p_user_agent TEXT,
-  p_device_name TEXT)
+  p_device_name TEXT
+)
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
-  INSERT INTO refresh_tokens (
+  INSERT INTO refresh_tokens
+  (
     id,
     user_id,
     token_hash,
@@ -113,8 +119,10 @@ BEGIN
     ip_address,
     user_agent,
     device_name,
-    created_at)
-  VALUES (
+    created_at
+  )
+  VALUES
+  (
     p_id,
     p_user_id,
     p_token_hash,
@@ -125,16 +133,18 @@ BEGIN
     p_ip_address,
     p_user_agent,
     p_device_name,
-    CURRENT_TIMESTAMP);
+    CURRENT_TIMESTAMP
+  );
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION replace_refresh_token(
+CREATE OR REPLACE FUNCTION replace_refresh_token
+(
   p_id UUID,
-  p_replaced_by_token_id UUID)
+  p_replaced_by_token_id UUID
+)
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   UPDATE  refresh_tokens
      SET  replaced_by_token_id = p_replaced_by_token_id,
@@ -143,10 +153,12 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION revoke_refresh_token(p_id UUID)
+CREATE OR REPLACE FUNCTION revoke_refresh_token
+(
+  p_id UUID
+)
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   UPDATE  refresh_tokens
      SET  is_revoked = TRUE
@@ -156,8 +168,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION mark_all_expired_refresh_tokens_as_revoked()
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   UPDATE  refresh_tokens
      SET  is_revoked = TRUE

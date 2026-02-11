@@ -1,7 +1,9 @@
 -- migrate:up
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. Events Table
-CREATE TABLE IF NOT EXISTS events (
+CREATE TABLE IF NOT EXISTS events
+(
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   category_id VARCHAR(20) NOT NULL REFERENCES event_categories(id),
   title VARCHAR(255) NOT NULL,
@@ -38,12 +40,14 @@ BEFORE INSERT OR UPDATE ON events
 FOR EACH ROW EXECUTE FUNCTION events_search_vector_trigger();
 
 -- 4. Functions
-CREATE OR REPLACE FUNCTION search_events_by_criteria(
+CREATE OR REPLACE FUNCTION search_events_by_criteria
+(
   p_keyword VARCHAR,
   p_offset INT,
   p_limit INT
 )
-RETURNS TABLE (
+RETURNS TABLE
+(
   id UUID,
   category_id VARCHAR,
   title VARCHAR,
@@ -51,7 +55,7 @@ RETURNS TABLE (
   start_at TIMESTAMPTZ,
   end_at TIMESTAMPTZ,
   location_name VARCHAR,
-  address VARCHAR,
+  "address" VARCHAR,
   map_url VARCHAR,
   thumbnail_url VARCHAR,
   settings JSONB,
@@ -85,12 +89,14 @@ BEGIN
 END
 $$;
 
-CREATE OR REPLACE FUNCTION search_events_by_category(
+CREATE OR REPLACE FUNCTION search_events_by_category
+(
   p_category_id VARCHAR,
   p_offset INT,
   p_limit INT
 )
-RETURNS TABLE (
+RETURNS TABLE
+(
   id UUID,
   category_id VARCHAR,
   title VARCHAR,
@@ -98,7 +104,7 @@ RETURNS TABLE (
   start_at TIMESTAMPTZ,
   end_at TIMESTAMPTZ,
   location_name VARCHAR,
-  address VARCHAR,
+  "address" VARCHAR,
   map_url VARCHAR,
   thumbnail_url VARCHAR,
   settings JSONB,
@@ -132,10 +138,12 @@ BEGIN
 END
 $$;
 
-CREATE OR REPLACE FUNCTION get_event_by_id(p_id UUID)
+CREATE OR REPLACE FUNCTION get_event_by_id
+(
+  p_id UUID
+)
 RETURNS SETOF events
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
   SELECT  *
@@ -144,7 +152,8 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION create_event(
+CREATE OR REPLACE FUNCTION create_event
+(
   p_id UUID,
   p_category_id VARCHAR,
   p_title VARCHAR,
@@ -159,19 +168,18 @@ CREATE OR REPLACE FUNCTION create_event(
   p_status SMALLINT
 )
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   INSERT INTO events
   (
     id,
     category_id,
     title,
-    description,
+    "description",
     start_at,
     end_at,
     location_name,
-    address,
+    "address",
     map_url,
     thumbnail_url,
     settings,
@@ -195,7 +203,8 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION update_event(
+CREATE OR REPLACE FUNCTION update_event
+(
   p_id UUID,
   p_category_id VARCHAR,
   p_title VARCHAR,
@@ -210,17 +219,16 @@ CREATE OR REPLACE FUNCTION update_event(
   p_status SMALLINT
 )
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   UPDATE  events
      SET  category_id = p_category_id,
           title = p_title,
-          description = p_description,
+          "description" = p_description,
           start_at = p_start_at,
           end_at = p_end_at,
           location_name = p_location_name,
-          address = p_address,
+          "address" = p_address,
           map_url = p_map_url,
           thumbnail_url = p_thumbnail_url,
           settings = p_settings,
@@ -230,10 +238,12 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION delete_event(p_id UUID)
+CREATE OR REPLACE FUNCTION delete_event
+(
+  p_id UUID
+)
 RETURNS VOID
-LANGUAGE plpgsql
-AS $$
+LANGUAGE plpgsql AS $$
 BEGIN
   UPDATE  events
      SET  "status" = 0,
