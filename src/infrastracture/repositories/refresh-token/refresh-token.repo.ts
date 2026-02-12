@@ -19,13 +19,13 @@ export class RefreshTokenRepo implements IRefreshTokenRepo {
   async getsWithPagination(page: number, pageSize: number): Promise<RefreshToken[]> {
     const limit = (page - 1) * pageSize;
     const query = sql.unsafe`SELECT * FROM get_refresh_tokens_by_user_id_with_pagination(${limit},${pageSize});`;
-    const data = await this.pool.query(query);
+    const data = await this.dbContext.query(query);
     return [...data.rows];
   }
 
   async getById(id: string): Promise<RefreshToken | null> {
     const query = sql.unsafe`SELECT * FROM get_refresh_token_by_id(${id});`;
-    const data = await this.pool.maybeOne(query);
+    const data = await this.dbContext.maybeOne(query);
     return data != null
       ? mapToRefreshTokenEntity(data)
       : null;
@@ -33,7 +33,7 @@ export class RefreshTokenRepo implements IRefreshTokenRepo {
 
   async getByTokenHash(tokenHash: string): Promise<RefreshToken | null> {
     const query = sql.unsafe`SELECT * FROM get_refresh_token_by_token_hash(${tokenHash});`;
-    const data = await this.pool.maybeOne(query);
+    const data = await this.dbContext.maybeOne(query);
     return data != null
       ? mapToRefreshTokenEntity(data)
       : null;
@@ -51,23 +51,23 @@ export class RefreshTokenRepo implements IRefreshTokenRepo {
       ${refreshToken.ipAddress},
       ${refreshToken.userAgent},
       ${refreshToken.deviceName});`;
-    await this.pool.query(query);
+    await this.dbContext.query(query);
   }
 
   async replace(id: string, replacedByTokenId: string): Promise<void> {
     const query = sql.unsafe`SELECT replace_refresh_token(
       ${id},
       ${replacedByTokenId});`;
-    await this.pool.query(query);
+    await this.dbContext.query(query);
   }
 
   async revoke(id: string): Promise<void> {
     const query = sql.unsafe`SELECT revoke_refresh_token(${id});`;
-    await this.pool.query(query);
+    await this.dbContext.query(query);
   }
 
   async markAllExpiredAsRevoked(): Promise<void> {
     const query = sql.unsafe`SELECT mark_all_expired_refresh_tokens_as_revoked();`;
-    await this.pool.query(query);
+    await this.dbContext.query(query);
   }
 }

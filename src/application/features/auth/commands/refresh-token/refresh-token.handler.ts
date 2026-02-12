@@ -26,11 +26,13 @@ export class RefreshTokenHandler implements ICommandHandler<RefreshTokenCommand,
     let newTokenId = '';
     const { tokenId, userId, role } = tokenInfo;
 
-    const newJwtId = UUIdHelper.createUUIDv7();
-    [newTokenId, newRefreshToken] = await this.authService.generateRefreshToken(userId, newJwtId);
+    await this.unitOfWork.withTransaction(async () => {
+      const newJwtId = UUIdHelper.createUUIDv7();
+      [newTokenId, newRefreshToken] = await this.authService.generateRefreshToken(userId, newJwtId);
 
-    newAccessToken = await this.authService.signAccessToken(userId, newJwtId, role);
-    this.repoFacade.refreshToken.replace(tokenId, newTokenId);
+      newAccessToken = await this.authService.signAccessToken(userId, newJwtId, role);
+      this.repoFacade.refreshToken.replace(tokenId, newTokenId);
+    });
 
     return new RefreshTokenResult(newAccessToken, newRefreshToken);
   }

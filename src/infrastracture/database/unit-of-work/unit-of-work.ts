@@ -9,7 +9,14 @@ export class UnitOfWork {
 
   async withTransaction<T>(work: () => Promise<T>): Promise<T> {
     return await this.pool.transaction(async (tx) => {
-      return transactionStorage.run(tx, work);
+      return transactionStorage.run(tx, async () => {
+        try {
+          return await work();
+        } catch (ex) {
+          console.error('[UOW Transaction Error]', ex);
+          throw ex;
+        }
+      });
     });
   }
 }
