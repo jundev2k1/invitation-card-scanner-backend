@@ -89,6 +89,22 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION get_user_status_count()
+RETURNS TABLE
+(
+  "status" SMALLINT,
+  "count" INT
+)
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+
+  SELECT  users.status, count(*)::INT AS "count"
+    FROM  users
+  GROUP BY users.status;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION get_user_by_email
 (
   p_email VARCHAR

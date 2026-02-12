@@ -9,6 +9,8 @@ export interface IUserRepo {
 
   getById(id: UUID): Promise<User | null>;
 
+  getUserStatusCount(): Promise<[UserStatus, number][]>;
+
   getByUsername(username: string): Promise<User | null>;
 
   getByEmail(email: string): Promise<User | null>;

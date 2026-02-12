@@ -3,10 +3,12 @@ import { RepositoryModule } from "src/infrastracture/repositories/repository.mod
 import { ApproveUserHandler } from "./commands/approve-user/approve-user.handler";
 import { GetUserDetailHandler } from "./queries/get-user-detail/get-user-detail.handler";
 import { GetUserListHandler } from "./queries/get-user-list/get-user-list.handler";
+import { GetUserStatusCountHandler } from "./queries/get-user-status-count/get-status-count.handler";
 
 const queries = [
   GetUserListHandler,
   GetUserDetailHandler,
+  GetUserStatusCountHandler,
 ];
 const commands = [
   ApproveUserHandler

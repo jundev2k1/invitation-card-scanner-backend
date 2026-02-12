@@ -33,6 +33,12 @@ export class UserRepo implements IUserRepo {
     return mapToSearchResult(data.rows, page, pageSize);
   }
 
+  async getUserStatusCount(): Promise<[UserStatus, number][]> {
+    const query = sql.unsafe`SELECT * FROM get_user_status_count();`;
+    const data = await this.dbContext.query(query);
+    return data.rows.map(i => [i.status, i.count]);
+  }
+
   async getById(id: UUID): Promise<User | null> {
     const query = sql.unsafe`SELECT * FROM get_user_by_id(${id.toString()});`;
     const data = await this.dbContext.maybeOne(query);
