@@ -42,7 +42,6 @@ export class AuthController {
 
   @Post('refresh-token')
   async refreshToken(@Body() request: RefreshTokenRequest) {
-    console.log(request);
     const command = new RefreshTokenCommand(request.accessToken, request.refreshToken);
     const result = await this.commandBus.execute(command);
     return ApiResponseFactory.ok(result);

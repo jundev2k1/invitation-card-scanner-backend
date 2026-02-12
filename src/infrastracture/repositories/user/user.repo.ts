@@ -5,6 +5,7 @@ import { PaginatedResult } from "src/application/common";
 import { UserSearchItem } from "src/application/features/users/dtos/user-search-item.dto";
 import { POSTGRES_POOL } from "src/common/tokens";
 import { User } from "src/domain/entities";
+import { UserStatus } from "src/domain/enums";
 import { IUserRepo } from "src/domain/interfaces/repositories/user.repo";
 import { transactionStorage } from "src/infrastracture/database/unit-of-work/transaction-storage";
 import { UUID } from "uuidv7";
@@ -13,17 +14,21 @@ import { mapToSearchResult, mapToUserEntity } from "./user.mapping";
 @Injectable()
 export class UserRepo implements IUserRepo {
   // Database context
-  private readonly dbContext: DatabaseTransactionConnection | DatabasePool;
+  private get dbContext(): DatabaseTransactionConnection | DatabasePool {
+    return transactionStorage.getStore() || this.pool;
+  }
 
   constructor(
     @Inject(POSTGRES_POOL) private readonly pool: DatabasePool
-  ) {
-    this.dbContext = transactionStorage.getStore() || pool;
-  }
+  ) { }
 
-  async search(keyword: string, page: number, pageSize: number): Promise<PaginatedResult<UserSearchItem>> {
+  async search(keyword: string, statuses: UserStatus[], page: number, pageSize: number): Promise<PaginatedResult<UserSearchItem>> {
     const limit = (page - 1) * pageSize;
-    const query = sql.unsafe`SELECT * FROM search_users_by_criteria(${keyword.trim()},${limit},${pageSize})`;
+    const query = sql.unsafe`SELECT * FROM search_users_by_criteria(
+      ${keyword.trim()},
+      ${sql.array(statuses, 'int2')},
+      ${limit},
+      ${pageSize})`;
     const data = await this.dbContext.query(query);
     return mapToSearchResult(data.rows, page, pageSize);
   }

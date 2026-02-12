@@ -13,9 +13,9 @@ export class GetUserListHandler implements IQueryHandler<GetUserListQuery, Pagin
   ) { }
 
   async execute(request: GetUserListQuery): Promise<PaginatedResult<UserSearchItem>> {
-    const { keyword, page, pageSize } = request;
+    const { keyword, statuses, page, pageSize } = request;
 
     return await this.repoFacade.user
-      .search(keyword, page, pageSize);
+      .search(keyword, statuses, page, pageSize);
   }
 }

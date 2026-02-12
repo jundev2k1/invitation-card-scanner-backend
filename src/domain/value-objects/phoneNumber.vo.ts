@@ -9,7 +9,7 @@ export default class PhoneNumber {
   static of(raw: string): PhoneNumber {
     const rawValue = raw.trim();
     if (!this.isValid(rawValue))
-      throw InvalidFormatException.InvalidEmail(raw);
+      throw InvalidFormatException.InvalidPhoneNumber(raw);
 
     return new PhoneNumber(rawValue);
   }

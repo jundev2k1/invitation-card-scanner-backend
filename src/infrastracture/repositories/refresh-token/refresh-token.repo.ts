@@ -8,13 +8,13 @@ import { mapToRefreshTokenEntity } from "./refresh-token.mapping";
 
 export class RefreshTokenRepo implements IRefreshTokenRepo {
   // Database context
-  private readonly dbContext: DatabaseTransactionConnection | DatabasePool;
-
+  private get dbContext(): DatabaseTransactionConnection | DatabasePool {
+    return transactionStorage.getStore() || this.pool;
+  }
+  
   constructor(
     @Inject(POSTGRES_POOL) private readonly pool: DatabasePool
-  ) {
-    this.dbContext = transactionStorage.getStore() || pool;
-  }
+  ) { }
 
   async getsWithPagination(page: number, pageSize: number): Promise<RefreshToken[]> {
     const limit = (page - 1) * pageSize;

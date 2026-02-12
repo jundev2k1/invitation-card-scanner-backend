@@ -31,7 +31,7 @@ export class RefreshTokenHandler implements ICommandHandler<RefreshTokenCommand,
       [newTokenId, newRefreshToken] = await this.authService.generateRefreshToken(userId, newJwtId);
 
       newAccessToken = await this.authService.signAccessToken(userId, newJwtId, role);
-      this.repoFacade.refreshToken.replace(tokenId, newTokenId);
+      await this.repoFacade.refreshToken.replace(tokenId, newTokenId);
     });
 
     return new RefreshTokenResult(newAccessToken, newRefreshToken);

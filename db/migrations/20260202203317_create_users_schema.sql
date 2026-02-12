@@ -44,6 +44,7 @@ FOR EACH ROW EXECUTE FUNCTION users_search_vector_trigger();
 CREATE OR REPLACE FUNCTION search_users_by_criteria
 (
   p_keyword VARCHAR,
+  p_statuses SMALLINT[],
   p_offset INT,
   p_limit INT
 )
@@ -77,7 +78,12 @@ BEGIN
           (COUNT(*) OVER())::int AS total_count
     FROM  users u
    WHERE  u.role <> 'ROOT'
-     AND  search_vector @@ plainto_tsquery('simple', p_keyword)
+     AND  (cardinality(p_statuses) = 0 OR u.status = ANY(p_statuses))
+     AND  (
+            p_keyword IS NULL OR 
+            p_keyword = '' OR 
+            u.search_vector @@ plainto_tsquery('simple', p_keyword)
+          )
   ORDER BY u.created_at DESC
    LIMIT  p_limit OFFSET p_offset;
 END;

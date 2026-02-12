@@ -6,6 +6,7 @@ import { Permission, PermissionGuard } from "src/application/common/https";
 import { ApproveUserCommand } from "src/application/features/users/commands/approve-user/approve-user.command";
 import { GetUserDetailQuery } from "src/application/features/users/queries/get-user-detail/get-user-detail.query";
 import { GetUserListQuery, GetUserListRequest } from "src/application/features/users/queries/get-user-list/get-user-list.query";
+import { UserStatus } from "src/domain/enums";
 import { Role } from "src/domain/value-objects";
 import { JwtAuthGuard } from "src/infrastracture/auth";
 import { UUID } from "uuidv7";
@@ -23,8 +24,12 @@ export class UserBackofficeController {
   @Get()
   @Permission(Role.admin)
   async getUserList(@Query() parameters: GetUserListRequest) {
+    const statuses: UserStatus[] = Array.isArray(parameters.statuses!)
+      ? parameters.statuses
+      : (parameters.statuses ? [parameters.statuses] : []);
     const query = new GetUserListQuery(
       parameters.keyword!,
+      statuses,
       parameters.page!,
       parameters.pageSize!
     );
