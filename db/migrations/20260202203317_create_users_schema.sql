@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS users
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_status ON users("status");
+CREATE INDEX IF NOT EXISTS idx_search_vector ON users USING gin (search_vector);
 
 -- Search Vector
 CREATE OR REPLACE FUNCTION users_search_vector_trigger()
@@ -29,8 +30,8 @@ BEGIN
   NEW.search_vector :=
     setweight(to_tsvector('simple', coalesce(NEW.username, '')), 'A') ||
     setweight(to_tsvector('simple', coalesce(NEW.nickname, '')), 'B') ||
-    setweight(to_tsvector('simple', coalesce(NEW.email, '')), 'C') ||
-    setweight(to_tsvector('simple', coalesce(NEW.phone_number, '')), 'D');
+    setweight(to_tsvector('simple', replace(coalesce(NEW.email, ''), '@', ' ')), 'C') ||
+    setweight(to_tsvector('simple', regexp_replace(coalesce(NEW.phone_number, ''), '\D', '', 'g')), 'D');
   RETURN NEW;
 END
 $$ LANGUAGE plpgsql;
