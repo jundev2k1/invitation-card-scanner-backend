@@ -4,7 +4,7 @@ import { Must } from "src/application/common/validators";
 import { Email, PhoneNumber, Sex } from "src/domain/value-objects";
 import { UUID } from "uuidv7";
 
-class UpdateUserInput {
+export class UpdateUserInput {
   @ApiProperty({ example: 'user01@example.com' })
   @IsNotEmpty({ message: 'Email is required.' })
   @Must((value) => Email.isValid(value), { message: 'Email is invalid' })
@@ -31,5 +31,12 @@ class UpdateUserInput {
 }
 
 export class UpdateUserCommand {
-  constructor(public readonly id: UUID, public readonly data: UpdateUserInput) { }
+  constructor(
+    public readonly id: UUID,
+    public email: Email,
+    public nickName: string,
+    public sex: Sex,
+    public phoneNumber: PhoneNumber,
+    public bio: string
+  ) { }
 }

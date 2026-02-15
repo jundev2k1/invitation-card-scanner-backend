@@ -1,4 +1,5 @@
-import { Body, Controller, Get, HttpCode, Param, Patch, Put, Query, UseGuards } from "@nestjs/common";
+import { UpdateUserCommand, UpdateUserInput } from "@/src/application/features/users/commands/update-user/update-user.command";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Put, Query, UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "src/api/common";
@@ -8,7 +9,7 @@ import { GetUserDetailQuery } from "src/application/features/users/queries/get-u
 import { GetUserListQuery, GetUserListRequest } from "src/application/features/users/queries/get-user-list/get-user-list.query";
 import { GetUserStatusCountQuery } from "src/application/features/users/queries/get-user-status-count/get-status-count.query";
 import { UserStatus } from "src/domain/enums";
-import { Role } from "src/domain/value-objects";
+import { Email, PhoneNumber, Role, Sex } from "src/domain/value-objects";
 import { JwtAuthGuard } from "src/infrastracture/auth";
 import { UUID } from "uuidv7";
 
@@ -24,7 +25,7 @@ export class UserBackofficeController {
 
   @Get("status/stats")
   @Permission(Role.admin)
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   async getUserStatusCount() {
     const query = new GetUserStatusCountQuery();
     const result = await this.queryBus.execute(query);
@@ -33,7 +34,7 @@ export class UserBackofficeController {
 
   @Get()
   @Permission(Role.admin)
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   async getUserList(@Query() parameters: GetUserListRequest) {
     const statuses: UserStatus[] = Array.isArray(parameters.statuses!)
       ? parameters.statuses
@@ -60,16 +61,24 @@ export class UserBackofficeController {
 
   @Put(':id')
   @Permission(Role.admin)
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
-  async updateUser(@Param('id') userId: UUID, @Body() status: UserStatus) {
-
+  async updateUser(@Param('id') userId: UUID, @Body() input: UpdateUserInput) {
+    const command = new UpdateUserCommand(
+      userId,
+      Email.of(input.email),
+      input.nickName,
+      Sex.of(input.sex),
+      PhoneNumber.of(input.phoneNumber),
+      input.bio
+    );
+    await this.commandBus.execute(command);
     return ApiResponseFactory.noContent();
   }
 
   @Patch(':id/status/approve')
   @Permission(Role.admin)
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
   async approveUser(@Param('id') userId: UUID) {
     const command = new ApproveUserCommand(userId);
