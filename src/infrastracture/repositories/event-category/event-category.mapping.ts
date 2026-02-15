@@ -1,12 +1,13 @@
 import { EventCategory } from "src/domain/entities";
 import { EventCategoryStatus } from "src/domain/enums";
+import { CategoryId } from "src/domain/value-objects";
 
 export const mapToEventCategoryEntity = (data: any): EventCategory | null => {
   if (!data) return null;
 
   return new EventCategory(
-    data.id,
-    data.parent_id,
+    CategoryId.of(data.id),
+    CategoryId.of(data.parent_id),
     data.name,
     data.slug,
     data.description,
