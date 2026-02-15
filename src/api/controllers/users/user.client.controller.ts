@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Inject, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, Inject, UseGuards } from "@nestjs/common";
 import { QueryBus } from "@nestjs/cqrs";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "src/api/common";
@@ -21,7 +21,7 @@ export class UserClientController {
 
   @Get('me')
   @Permission(Role.admin, Role.staff)
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   async getMe() {
     const query = new GetUserDetailQuery(this.userAccessor.userId);
     const result = await this.queryBus.execute(query);

@@ -51,7 +51,7 @@ export class UserBackofficeController {
 
   @Get(':id')
   @Permission(Role.admin)
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
   async getUserDetail(@Param('id') userId: UUID) {
     const query = new GetUserDetailQuery(userId);
