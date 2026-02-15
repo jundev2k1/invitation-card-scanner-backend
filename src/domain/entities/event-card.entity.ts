@@ -11,13 +11,15 @@ export class EventCard {
     public isUsed: boolean,
     public firstScannedAt: Date | null,
     public status: EventCardStatus = EventCardStatus.ACTIVE,
+    public notes: string,
     public createdAt: Date,
     public updatedAt: Date,
   ) { }
 
   static create(props: {
-    eventId: string;
-    guestName: string;
+    eventId: string,
+    guestName: string,
+    notes: string,
   }): EventCard {
 
     InvalidParameterException.ThrowIfEmptyString(props.eventId, "EventId is required.");
@@ -31,6 +33,7 @@ export class EventCard {
       false,
       null,
       EventCardStatus.ACTIVE,
+      props.notes,
       new Date(),
       new Date(),
     );

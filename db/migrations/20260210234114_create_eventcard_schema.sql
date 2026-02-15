@@ -11,8 +11,10 @@ CREATE TABLE IF NOT EXISTS event_cards
   is_used BOOLEAN DEFAULT FALSE,
   first_scanned_at TIMESTAMP WITH TIME ZONE,
   "status" SMALLINT DEFAULT 1,
+  notes TEXT NOT NULL DEFAULT '',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  search_vector tsvector
 );
 
 CREATE INDEX IF NOT EXISTS idx_event_cards_token ON event_cards(access_token);
@@ -22,7 +24,9 @@ CREATE INDEX IF NOT EXISTS idx_event_cards_event ON event_cards(event_id);
 CREATE OR REPLACE FUNCTION event_cards_search_vector_trigger()
 RETURNS trigger AS $$
 BEGIN
-  NEW.search_vector := setweight(to_tsvector('simple', coalesce(NEW.guest_name, '')), 'A');
+  NEW.search_vector :=
+    setweight(to_tsvector('simple', coalesce(NEW.guest_name, '')), 'A') ||
+    setweight(to_tsvector('simple', coalesce(NEW.notes, '')), 'B');
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -35,39 +39,82 @@ FOR EACH ROW EXECUTE PROCEDURE event_cards_search_vector_trigger();
 -- Function: get_event_cards_by_event_id
 CREATE OR REPLACE FUNCTION get_event_cards_by_event_id
 (
-  p_event_id UUID
+  p_event_id UUID,
+  p_keyword VARCHAR,
+  p_offset INT,
+  p_limit INT
 )
-RETURNS SETOF event_cards
+RETURNS TABLE (
+  id UUID,
+  event_id UUID,
+  guest_name VARCHAR,
+  access_token UUID,
+  is_used BOOLEAN,
+  first_scanned_at TIMESTAMP WITH TIME ZONE,
+  "status" SMALLINT,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE,
+  updated_at TIMESTAMP WITH TIME ZONE,
+  total_count INT
+)
 LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
   SELECT  *
     FROM  event_cards
-   WHERE  event_id = p_event_id;
+   WHERE  event_id = p_event_id
+     AND  (
+            p_keyword IS NULL
+            OR
+            p_keyword = ''
+            OR
+            search_vector @@ to_tsquery('simple', p_keyword)
+          )
+   LIMIT  p_limit OFFSET p_offset;
 END;
 $$;
 
 -- Function: create_event_card
 CREATE OR REPLACE FUNCTION create_event_card
 (
+  p_id UUID,
   p_event_id UUID,
   p_guest_name VARCHAR,
-  p_access_token UUID
+  p_access_token UUID,
+  p_is_used BOOLEAN,
+  p_first_scanned_at TIMESTAMP WITH TIME ZONE,
+  p_status SMALLINT,
+  p_notes TEXT,
+  p_created_at TIMESTAMP WITH TIME ZONE
 )
 RETURNS VOID
 LANGUAGE plpgsql AS $$
 BEGIN
   INSERT INTO  event_cards
   (
+    id,
     event_id,
     guest_name,
-    access_token
+    access_token,
+    is_used,
+    first_scanned_at,
+    "status",
+    notes,
+    created_at,
+    updated_at
   )
   VALUES
   (
+    p_id,
     p_event_id,
     p_guest_name,
-    p_access_token
+    p_access_token,
+    p_is_used,
+    p_first_scanned_at,
+    p_status,
+    p_notes,
+    p_created_at,
+    p_created_at
   );
 END;
 $$;
@@ -78,7 +125,11 @@ CREATE OR REPLACE FUNCTION update_event_card
   p_id UUID,
   p_event_id UUID,
   p_guest_name VARCHAR,
-  p_access_token UUID
+  p_access_token UUID,
+  p_is_used BOOLEAN,
+  p_first_scanned_at TIMESTAMP WITH TIME ZONE,
+  p_status SMALLINT,
+  p_notes TEXT
 )
 RETURNS VOID
 LANGUAGE plpgsql AS $$
@@ -86,7 +137,12 @@ BEGIN
   UPDATE  event_cards
      SET  event_id = p_event_id,
           guest_name = p_guest_name,
-          access_token = p_access_token
+          access_token = p_access_token,
+          is_used = p_is_used,
+          first_scanned_at = p_first_scanned_at,
+          "status" = p_status,
+          notes = p_notes,
+          updated_at = CURRENT_TIMESTAMP
    WHERE  id = p_id;
 END;
 $$;
