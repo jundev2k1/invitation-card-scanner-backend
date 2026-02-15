@@ -1,3 +1,4 @@
+import { DatabaseModule } from "@/src/infrastracture/database/database.module";
 import { Module } from "@nestjs/common";
 import { RepositoryModule } from "src/infrastracture/repositories/repository.module";
 import { ApproveUserHandler } from "./commands/approve-user/approve-user.handler";
@@ -17,7 +18,7 @@ const commands = [
 ];
 
 @Module({
-  imports: [RepositoryModule],
+  imports: [RepositoryModule, DatabaseModule],
   providers: [...queries, ...commands],
 })
 export class UserCqrsModule { }
