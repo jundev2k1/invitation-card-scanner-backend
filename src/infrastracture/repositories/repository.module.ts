@@ -3,7 +3,7 @@ import { EVENT_CARD_REPO, EVENT_CATEGORY_REPO, EVENT_MEMBER_REPO, EVENT_REPO, RE
 import { DatabaseModule } from "../database/database.module";
 import { EventCardRepo } from "./event-card/event-card.repo";
 import { EventCategoryRepo } from "./event-category/event-category.repo";
-import { EventMemberRepo } from "./event-members/event-member.repo";
+import { EventMemberRepo } from "./event-member/event-member.repo";
 import { EventRepo } from "./event/event.repo";
 import { RefreshTokenRepo } from "./refresh-token/refresh-token.repo";
 import { RepositoryFacade } from "./repository-facade";
