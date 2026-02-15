@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, Post } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "src/api/common";
@@ -15,6 +15,7 @@ export class AuthController {
   ) { }
 
   @Post('login')
+  @HttpCode(200)
   async login(@Body() request: LoginRequest) {
     const command = new LoginCommand(request.username, request.password);
     const result = await this.commandBus.execute(command);
@@ -22,6 +23,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @HttpCode(200)
   async register(@Body() request: RegisterRequest) {
     const command = new RegisterCommand(
       UserName.of(request.username),
@@ -36,11 +38,13 @@ export class AuthController {
   }
 
   @Post('logout')
+  @HttpCode(200)
   async logout() {
     return ApiResponseFactory.noContent();
   }
 
   @Post('refresh-token')
+  @HttpCode(200)
   async refreshToken(@Body() request: RefreshTokenRequest) {
     const command = new RefreshTokenCommand(request.accessToken, request.refreshToken);
     const result = await this.commandBus.execute(command);

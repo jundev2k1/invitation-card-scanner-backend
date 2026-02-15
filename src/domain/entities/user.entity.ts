@@ -59,6 +59,10 @@ export class User extends baseEntity<string> {
     this.phoneNumber = phoneNumber;
   }
 
+  public updateEmail(email: Email): void {
+    this.email = email;
+  }
+
   public updateAvatar(avatarUrl: string): void {
     this.avatarUrl = avatarUrl.trim();
   }

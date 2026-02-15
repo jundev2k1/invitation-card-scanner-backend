@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Param, Patch, Put, Query, UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "src/api/common";
@@ -24,6 +24,7 @@ export class UserBackofficeController {
 
   @Get("status/stats")
   @Permission(Role.admin)
+  @HttpCode(200)
   async getUserStatusCount() {
     const query = new GetUserStatusCountQuery();
     const result = await this.queryBus.execute(query);
@@ -32,6 +33,7 @@ export class UserBackofficeController {
 
   @Get()
   @Permission(Role.admin)
+  @HttpCode(200)
   async getUserList(@Query() parameters: GetUserListRequest) {
     const statuses: UserStatus[] = Array.isArray(parameters.statuses!)
       ? parameters.statuses
@@ -48,6 +50,7 @@ export class UserBackofficeController {
 
   @Get(':id')
   @Permission(Role.admin)
+  @HttpCode(200)
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
   async getUserDetail(@Param('id') userId: UUID) {
     const query = new GetUserDetailQuery(userId);
@@ -55,8 +58,18 @@ export class UserBackofficeController {
     return ApiResponseFactory.ok(result);
   }
 
-  @Post(':id/status/approve')
+  @Put(':id')
   @Permission(Role.admin)
+  @HttpCode(200)
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
+  async updateUser(@Param('id') userId: UUID, @Body() status: UserStatus) {
+
+    return ApiResponseFactory.noContent();
+  }
+
+  @Patch(':id/status/approve')
+  @Permission(Role.admin)
+  @HttpCode(200)
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
   async approveUser(@Param('id') userId: UUID) {
     const command = new ApproveUserCommand(userId);
