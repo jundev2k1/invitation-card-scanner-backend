@@ -1,4 +1,4 @@
-export abstract class baseEntity<T> {
+export abstract class BaseEntity<T> {
   constructor(
     public id: T,
     public createdAt: Date,

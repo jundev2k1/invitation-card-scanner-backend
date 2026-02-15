@@ -1,7 +1,7 @@
 import { UUIdHelper } from "src/common";
-import { baseEntity } from "./base.entity";
+import { BaseEntity } from "./base.entity";
 
-export class RefreshToken extends baseEntity<string> {
+export class RefreshToken extends BaseEntity<string> {
   constructor(
     public id: string,
     public userId: string,

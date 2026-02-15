@@ -2,9 +2,9 @@ import { UUIdHelper } from "src/common";
 import { UserStatus } from "../enums";
 import { InvalidParameterException } from "../exceptions";
 import { Email, PhoneNumber, Role, Sex, UserName } from "../value-objects";
-import { baseEntity } from "./base.entity";
+import { BaseEntity } from "./base.entity";
 
-export class User extends baseEntity<string> {
+export class User extends BaseEntity<string> {
   constructor(
     public id: string,
     public username: UserName,
