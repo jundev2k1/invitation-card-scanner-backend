@@ -15,15 +15,58 @@ CREATE INDEX IF NOT EXISTS idx_event_members_user_id ON event_members(user_id);
 
 CREATE OR REPLACE FUNCTION get_event_members_by_event_id
 (
-  p_event_id UUID
+  p_event_id UUID,
+  p_keyword VARCHAR,
+  p_limit INT,
+  p_offset INT
 )
-RETURNS SETOF event_members
+RETURNS TABLE (
+  id UUID,
+  event_id UUID,
+  user_id UUID,
+  nickname VARCHAR,
+  email VARCHAR,
+  phone_number VARCHAR,
+  profile_image VARCHAR,
+  assigned_role VARCHAR,
+  assigned_at TIMESTAMP WITH TIME ZONE,
+  total_count INT
+)
 LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
-  SELECT  *
-    FROM  event_members
-   WHERE  event_id = p_event_id;
+  SELECT  em.id,
+          em.event_id,
+          em.user_id,
+          u.nickname,
+          u.email,
+          u.phone_number,
+          u.avatar_url,
+          em.assigned_role,
+          em.assigned_at,
+          (COUNT(*) OVER())::int AS total_count
+    FROM  event_members em
+    JOIN  users u ON
+          (
+            em.user_id = u.id
+            AND
+            u.role <> 'ROOT'
+            AND
+            u.status = 'ACTIVE'
+          )
+   WHERE  event_id = p_event_id
+     AND  (
+            p_keyword IS NULL
+            OR
+            p_keyword = ''
+            OR
+            u.search_vector @@ to_tsquery('simple', p_keyword)
+            OR
+            em.assigned_role ILIKE '%' || p_keyword || '%'
+            OR
+            em.user_id LIKE p_keyword || '%'
+          )
+   LIMIT  p_limit OFFSET p_offset;
 END;
 $$;
 
@@ -76,6 +119,17 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION remove_all_event_members_in_event
+(
+  p_event_id UUID
+)
+RETURNS VOID
+LANGUAGE plpgsql AS $$
+BEGIN
+  DELETE FROM event_members WHERE event_id = p_event_id;
+END;
+$$;
+
 -- migrate:down
 DROP TABLE IF EXISTS event_members CASCADE;
 DROP INDEX IF EXISTS idx_event_members_event_id;
@@ -85,3 +139,4 @@ DROP FUNCTION IF EXISTS get_event_members_by_event_id;
 DROP FUNCTION IF EXISTS create_event_member;
 DROP FUNCTION IF EXISTS update_event_member;
 DROP FUNCTION IF EXISTS delete_event_member;
+DROP FUNCTION IF EXISTS remove_all_event_members_in_event;
