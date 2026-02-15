@@ -37,7 +37,7 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
       user.updateEmail(email);
 
       // Save user to database
-      this.repoFacade.user.update(user);
+      await this.repoFacade.user.update(user);
     });
   }
 }
