@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
-import { EVENT_CARD_REPO, EVENT_CATEGORY_REPO, EVENT_MEMBER_REPO, EVENT_REPO, REFRESH_TOKEN_REPO, REPO_FACADE, USER_REPO } from "src/common/tokens";
+import { EVENT_CARD_LOG_REPO, EVENT_CARD_REPO, EVENT_CATEGORY_REPO, EVENT_MEMBER_REPO, EVENT_REPO, REFRESH_TOKEN_REPO, REPO_FACADE, USER_REPO } from "src/common/tokens";
 import { DatabaseModule } from "../database/database.module";
+import { EventCardLogRepo } from "./event-card-log/event-card-log.repo";
 import { EventCardRepo } from "./event-card/event-card.repo";
 import { EventCategoryRepo } from "./event-category/event-category.repo";
 import { EventMemberRepo } from "./event-member/event-member.repo";
@@ -17,6 +18,7 @@ const repoProviders = [
   { provide: EVENT_REPO, useClass: EventRepo },
   { provide: EVENT_CARD_REPO, useClass: EventCardRepo },
   { provide: EVENT_MEMBER_REPO, useClass: EventMemberRepo },
+  { provide: EVENT_CARD_LOG_REPO, useClass: EventCardLogRepo },
 ];
 
 @Module({

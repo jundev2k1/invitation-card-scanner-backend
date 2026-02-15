@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS event_card_logs
   card_id UUID NOT NULL REFERENCES event_cards(id) ON DELETE CASCADE,
   scanned_by UUID NOT NULL REFERENCES users(id),
   scanned_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  note TEXT
+  notes TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_event_card_logs_card ON event_card_logs(card_id);
@@ -30,20 +30,29 @@ RETURNS TABLE
   id UUID,
   card_id UUID,
   scanned_by UUID,
+  scanned_by_nickname VARCHAR,
+  scanned_by_email VARCHAR,
+  scanned_by_phone VARCHAR,
+  scanned_by_status SMALLINT,
   scanned_at TIMESTAMPTZ,
-  note TEXT,
+  notes TEXT,
   total_count INT
 ) 
 LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
-  SELECT  id,
-          card_id,
-          scanned_by,
-          scanned_at,
-          note, 
+  SELECT  ecl.id,
+          ecl.card_id,
+          ecl.scanned_by,
+          u.nickname,
+          u.email,
+          u.phone_number,
+          u.status,
+          ecl.scanned_at,
+          ecl.notes,
           COUNT(*) OVER () AS total_count
-    FROM  event_card_logs
+    FROM  event_card_logs ecl
+    JOIN  users u ON u.id = scanned_by
    WHERE  (
             p_card_id IS NULL
             OR
@@ -72,39 +81,44 @@ $$;
 
 CREATE OR REPLACE FUNCTION create_event_card_log
 (
+  p_id UUID,
   p_card_id UUID,
   p_scanned_by UUID,
-  p_note TEXT
+  p_notes TEXT,
+  p_scanned_at TIMESTAMPTZ
 )
 RETURNS UUID
 LANGUAGE plpgsql AS $$
 BEGIN
   INSERT INTO event_card_logs
   (
+    id,
     card_id,
     scanned_by,
-    note
+    notes,
+    scanned_at
   )
   VALUES
   (
+    p_id,
     p_card_id,
     p_scanned_by,
-    p_note
-  )
-  RETURNING id;
+    p_notes,
+    p_scanned_at
+  );
 END;
 $$;
 
 CREATE OR REPLACE FUNCTION update_event_card_log
 (
   p_id UUID,
-  p_note TEXT
+  p_notes TEXT
 )
 RETURNS VOID
 LANGUAGE plpgsql AS $$
 BEGIN
   UPDATE  event_card_logs
-     SET  note = p_note
+     SET  notes = p_notes
    WHERE  id = p_id;
 END;
 $$;
@@ -131,6 +145,3 @@ DROP FUNCTION IF EXISTS get_event_card_logs_by_criteria;
 DROP FUNCTION IF EXISTS create_event_card_log;
 DROP FUNCTION IF EXISTS update_event_card_log;
 DROP FUNCTION IF EXISTS delete_event_card_log;
-
-DROP TRIGGER IF EXISTS trg_event_card_logs_search_update;
-DROP FUNCTION IF EXISTS event_card_logs_search_vector_trigger;

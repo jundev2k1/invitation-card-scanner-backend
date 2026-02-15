@@ -7,13 +7,13 @@ export class EventCardLog {
     public cardId: string,
     public scannedBy: string,
     public scannedAt: Date,
-    public note: string | null,
+    public notes: string | null,
   ) {}
 
   static create(props: {
     cardId: string;
     scannedBy: string;
-    note?: string;
+    notes: string;
   }): EventCardLog {
 
     InvalidParameterException.ThrowIfEmptyString(props.cardId, "CardId is required.");
@@ -24,7 +24,11 @@ export class EventCardLog {
       props.cardId,
       props.scannedBy,
       new Date(),
-      props.note?.trim() ?? null,
+      props.notes?.trim() ?? '',
     );
+  }
+
+  update(notes: string | null): void {
+    this.notes = notes?.trim() ?? '';
   }
 }

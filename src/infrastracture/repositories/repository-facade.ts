@@ -1,5 +1,6 @@
 import { Inject } from "@nestjs/common";
-import { EVENT_CARD_REPO, EVENT_CATEGORY_REPO, EVENT_MEMBER_REPO, EVENT_REPO, REFRESH_TOKEN_REPO, USER_REPO } from "src/common/tokens";
+import { EVENT_CARD_LOG_REPO, EVENT_CARD_REPO, EVENT_CATEGORY_REPO, EVENT_MEMBER_REPO, EVENT_REPO, REFRESH_TOKEN_REPO, USER_REPO } from "src/common/tokens";
+import { EventCardLogRepo } from "./event-card-log/event-card-log.repo";
 import { EventCardRepo } from "./event-card/event-card.repo";
 import { EventCategoryRepo } from "./event-category/event-category.repo";
 import { EventMemberRepo } from "./event-member/event-member.repo";
@@ -14,7 +15,8 @@ export class RepositoryFacade {
     @Inject(EVENT_CATEGORY_REPO) private readonly eventCategoryRepo: EventCategoryRepo,
     @Inject(EVENT_REPO) private readonly eventRepo: EventRepo,
     @Inject(EVENT_CARD_REPO) private readonly eventCardRepo: EventCardRepo,
-    @Inject(EVENT_MEMBER_REPO) private readonly eventMemberRepo: EventMemberRepo
+    @Inject(EVENT_MEMBER_REPO) private readonly eventMemberRepo: EventMemberRepo,
+    @Inject(EVENT_CARD_LOG_REPO) private readonly eventCardLogRepo: EventCardLogRepo
   ) { }
 
   get user() { return this.userRepo; }
@@ -23,4 +25,5 @@ export class RepositoryFacade {
   get event() { return this.eventRepo; }
   get eventCard() { return this.eventCardRepo; }
   get eventMember() { return this.eventMemberRepo; }
+  get eventCardLog() { return this.eventCardLogRepo; }
 }
