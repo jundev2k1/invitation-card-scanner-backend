@@ -1,6 +1,7 @@
 import { CreateCategoryCommand, CreateCategoryInput } from "@/src/application/features/event-categories/commands/create-category/create-category.command";
+import { DeleteCategoryCommand } from "@/src/application/features/event-categories/commands/delete-category/delete-category.command";
 import { UpdateCategoryCommand, UpdateCategoryInput } from "@/src/application/features/event-categories/commands/update-category/update-category.command";
-import { Body, Controller, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "src/api/common";
@@ -37,7 +38,7 @@ export class EventCategoryBackofficeController {
   @Put(':id')
   @Permission(Role.admin)
   @HttpCode(HttpStatus.OK)
-  @ApiParam({ name: 'id', type: String, format: 'uuid' })
+  @ApiParam({ name: 'id', type: String })
   async updateCategory(
     @Param('id') id: string,
     @Body() input: UpdateCategoryInput
@@ -49,6 +50,16 @@ export class EventCategoryBackofficeController {
       input.description?.trim() || '',
       input.sortOrder || 0
     );
+    await this.commandBus.execute(command);
+    return ApiResponseFactory.noContent();
+  }
+
+  @Delete(':id')
+  @Permission(Role.admin)
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'id', type: String })
+  async deleteCategories(@Param('id') id: string) {
+    const command = new DeleteCategoryCommand(CategoryId.of(id));
     await this.commandBus.execute(command);
     return ApiResponseFactory.noContent();
   }
