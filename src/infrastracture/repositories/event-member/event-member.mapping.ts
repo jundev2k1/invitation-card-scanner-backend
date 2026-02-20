@@ -1,5 +1,5 @@
 import { PaginatedResult } from "@/src/application/common";
-import { EventMemberDto } from "@/src/application/features/event-members/dtos";
+import { EventMemberDto } from "@/src/application/features/events/dtos";
 
 export const mapToEventMemberSearchResult = (
   data: readonly any[],

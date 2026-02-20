@@ -3,6 +3,7 @@ import { CqrsModule } from "@nestjs/cqrs";
 import { SecurityModule } from "src/infrastracture/security/security.module";
 import { AuthController } from "./auth.controller";
 import { EventCategoryBackofficeController } from "./events/event-category.backoffice.controller";
+import { EventBackofficeController } from "./events/event.backoffice.controller";
 import { UserBackofficeController } from "./users/user.backoffice.controller";
 import { UserClientController } from "./users/user.client.controller";
 
@@ -15,7 +16,10 @@ const controllers = [
   UserBackofficeController,
 
   // EventCategory Controllers
-  EventCategoryBackofficeController
+  EventCategoryBackofficeController,
+
+  // Event Controllers
+  EventBackofficeController,
 ];
 
 @Module({

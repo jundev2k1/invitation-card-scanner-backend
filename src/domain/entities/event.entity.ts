@@ -7,7 +7,7 @@ import { BaseEntity } from "./base.entity";
 export class Event extends BaseEntity<string> {
   constructor(
     public id: string,
-    public categoryId: CategoryId,
+    public categoryId: CategoryId | null,
     public title: string,
     public description: string = '',
     public startAt: Date,
@@ -24,7 +24,7 @@ export class Event extends BaseEntity<string> {
   }
 
   static create(props: {
-    categoryId: CategoryId;
+    categoryId: CategoryId | null;
     title: string;
     startAt: Date;
     endAt?: Date | null;
