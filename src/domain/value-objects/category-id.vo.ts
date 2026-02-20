@@ -18,4 +18,12 @@ export default class CategoryId {
       && rawValue === rawValue.toUpperCase()
       && (rawValue === 'ROOT' || rawValue.length % 3 === 0);
   }
+
+  getLevel(): number {
+    return this.value === 'ROOT'
+      ? 0
+      : this.value.length / 3;
+  }
+
+  get isRoot(): boolean { return this.value === 'ROOT'; }
 }

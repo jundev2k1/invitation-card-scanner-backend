@@ -38,6 +38,56 @@ BEFORE INSERT OR UPDATE ON event_categories
 FOR EACH ROW EXECUTE FUNCTION event_categories_search_vector_trigger();
 
 -- 4. Functions
+CREATE OR REPLACE FUNCTION search_event_categories
+(
+  p_id VARCHAR,
+  p_parent_id VARCHAR,
+  p_keyword VARCHAR
+)
+RETURNS SETOF event_categories
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+  WITH searchResult AS
+  (
+    SELECT  ec.id
+      FROM  event_categories AS ec
+     WHERE  id <> '' AND id LIKE p_id || '%'
+        OR  parent_id <> '' AND parent_id = p_id
+        OR  p_keyword = '' OR ec.search_vector @@ plainto_tsquery('simple', p_keyword)
+  )
+  SELECT  *
+    FROM  event_categories ec
+   WHERE  EXISTS
+          (
+            SELECT 1
+              FROM searchResult
+             WHERE ec.id LIKE p_id || '%'
+          );
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_all_active_event_categories
+RETURNS SETOF event_categories
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+  SELECT  *
+    FROM  event_categories AS ec
+   WHERE  "status" = 1
+     AND  NOT EXISTS
+          (
+            SELECT 1
+            FROM categories parent
+            WHERE parent.status = 0
+              AND parent.id <> c.id
+              AND LENGTH(c.id) > LENGTH(parent.id)
+              AND (LENGTH(c.id) - LENGTH(parent.id)) % 3 = 0
+              AND c.id LIKE parent.id || '%'
+          );
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION get_event_category_by_id
 (
   p_id VARCHAR
@@ -49,6 +99,39 @@ BEGIN
   SELECT  *
     FROM  event_categories
    WHERE  id = p_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION is_exist_parent_category
+(
+  p_parent_id VARCHAR
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN EXISTS(SELECT 1 FROM event_categories WHERE id = p_parent_id);
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION is_exist_category
+(
+  p_id VARCHAR
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN EXISTS(SELECT 1 FROM event_categories WHERE id = p_id);
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION is_exist_category_by_slug
+(
+  p_slug VARCHAR
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN EXISTS(SELECT 1 FROM event_categories WHERE slug = p_slug);
 END;
 $$;
 
@@ -126,12 +209,26 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION delete_event_category
+(
+  p_id VARCHAR
+)
+RETURNS VOID
+LANGUAGE plpgsql AS $$
+BEGIN
+  DELETE FROM event_categories WHERE id LIKE p_id || '%';
+END;
+$$;
+
 -- migrate:down
 DROP TABLE IF EXISTS event_categories CASCADE;
-DROP FUNCTION IF EXISTS get_event_category_tree;
-DROP FUNCTION IF EXISTS search_event_categories;
-DROP FUNCTION IF EXISTS create_event_category;
+DROP INDEX IF EXISTS idx_event_categories_parent;
+DROP INDEX IF EXISTS idx_event_categories_status;
+DROP INDEX IF EXISTS idx_event_categories_search_vector;
 
+DROP FUNCTION IF EXISTS search_event_categories;
+DROP FUNCTION IF EXISTS get_all_active_event_categories;
 DROP FUNCTION IF EXISTS get_event_category_by_id;
 DROP FUNCTION IF EXISTS create_event_category;
 DROP FUNCTION IF EXISTS update_event_category;
+DROP FUNCTION IF EXISTS delete_event_category;

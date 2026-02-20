@@ -16,6 +16,27 @@ export class EventCategoryRepo implements IEventCategoryRepo {
     @Inject(POSTGRES_POOL) private readonly pool: DatabasePool
   ) { }
 
+  async search(parentId: string, cateId: string, keyword: string): Promise<EventCategory[]> {
+    const query = sql.unsafe`
+      SELECT * FROM search_event_categories(
+        ${cateId || ''},
+        ${parentId || ''},
+        ${keyword || ''});
+    `;
+
+    const data = await this.dbContext.query(query);
+    return data.rows.map(row => mapToEventCategoryEntity(row)!);
+  }
+
+  async getAllActive(): Promise<EventCategory[]> {
+    const query = sql.unsafe`
+      SELECT * FROM get_all_active_event_categories();
+    `;
+
+    const data = await this.dbContext.query(query);
+    return data.rows.map(row => mapToEventCategoryEntity(row)!);
+  }
+
   async getById(id: string): Promise<EventCategory | null> {
     const query = sql.unsafe`
       SELECT * FROM get_event_category_by_id(${id});
@@ -25,6 +46,30 @@ export class EventCategoryRepo implements IEventCategoryRepo {
     return data
       ? mapToEventCategoryEntity(data) :
       null;
+  }
+
+  async isExistParent(id: string): Promise<boolean> {
+    const query = sql.unsafe`
+      SELECT is_exist_parent_category(${id});
+    `;
+
+    return await this.dbContext.oneFirst(query);
+  }
+
+  async isExistId(id: string): Promise<boolean> {
+    const query = sql.unsafe`
+      SELECT is_exist_category(${id});
+    `;
+
+    return await this.dbContext.oneFirst(query);
+  }
+
+  async isExistSlug(slug: string): Promise<boolean> {
+    const query = sql.unsafe`
+      SELECT is_exist_category_by_slug(${slug});
+    `;
+
+    return await this.dbContext.oneFirst(query);
   }
 
   async create(entity: EventCategory): Promise<void> {
@@ -59,5 +104,10 @@ export class EventCategoryRepo implements IEventCategoryRepo {
     `;
 
     await this.dbContext.query(stored);
+  }
+
+  async delete(id: string): Promise<void> {
+    const query = sql.unsafe`SELECT delete_event_category(${id})`;
+    await this.dbContext.query(query);
   }
 }

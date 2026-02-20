@@ -41,7 +41,7 @@ export class EventCategory extends BaseEntity<CategoryId> {
       props.imageUrl?.trim() ?? '',
       EventCategoryStatus.ACTIVE,
       props.sortOrder ?? 0,
-      props.parentId ? 2 : 1,
+      props.id.getLevel(),
       new Date(),
       new Date()
     );
