@@ -1,5 +1,6 @@
 import { Permission, PermissionGuard } from "@/src/application/common/https";
 import { CreateEventCardCommand, CreateEventCardRequest } from "@/src/application/features/event-cards/commands/create-card/create-card.command";
+import { DeleteEventCardCommand } from "@/src/application/features/event-cards/commands/delete-card/delete-card.command";
 import { UpdateEventCardCommand, UpdateEventCardRequest } from "@/src/application/features/event-cards/commands/update-card/update-card.command";
 import { CreateEventCommand, CreateEventRequest } from "@/src/application/features/events/commands/create-event/create-event.command";
 import { DeleteEventCommand } from "@/src/application/features/events/commands/delete-event/delete-event.command";
@@ -132,6 +133,17 @@ export class EventBackofficeController {
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
   async deleteEvent(@Param('id') id: string) {
     const command = new DeleteEventCommand(id);
+    await this.commandBus.execute(command);
+    return ApiResponseFactory.noContent();
+  }
+
+  @Delete(':id/cards/:cardId')
+  @Permission(Role.admin)
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
+  @ApiParam({ name: 'cardId', type: String, format: 'uuid' })
+  async deleteEventCard(@Param('id') eventId: string, @Param('cardId') cardId: string) {
+    const command = new DeleteEventCardCommand(eventId, cardId);
     await this.commandBus.execute(command);
     return ApiResponseFactory.noContent();
   }
