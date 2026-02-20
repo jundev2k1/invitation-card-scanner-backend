@@ -1,7 +1,8 @@
 import { CreateCategoryCommand, CreateCategoryInput } from "@/src/application/features/event-categories/commands/create-category/create-category.command";
 import { DeleteCategoryCommand } from "@/src/application/features/event-categories/commands/delete-category/delete-category.command";
 import { UpdateCategoryCommand, UpdateCategoryInput } from "@/src/application/features/event-categories/commands/update-category/update-category.command";
-import { Body, Controller, Delete, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { SearchCategoriesQuery, SearchCategoriesRequest } from "@/src/application/features/event-categories/queries/search/search.query";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "src/api/common";
@@ -18,6 +19,18 @@ export class EventCategoryBackofficeController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) { }
+
+  @Get()
+  @Permission(Role.admin)
+  @HttpCode(HttpStatus.OK)
+  async getCategories(request: SearchCategoriesRequest) {
+    const query = new SearchCategoriesQuery(
+      request.parentId || '',
+      request.id || '',
+      request.keyword || '');
+    const result = await this.queryBus.execute(query);
+    return ApiResponseFactory.ok(result);
+  }
 
   @Post()
   @Permission(Role.admin)
