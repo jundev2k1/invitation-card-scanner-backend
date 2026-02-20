@@ -1,7 +1,7 @@
 export class EventDetailDto {
   constructor(
     public readonly id: string,
-    public readonly categoryId: string,
+    public readonly categoryId: string | null,
     public readonly title: string,
     public readonly description: string,
     public readonly startAt: Date,

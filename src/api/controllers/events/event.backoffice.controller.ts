@@ -2,6 +2,7 @@ import { Permission, PermissionGuard } from "@/src/application/common/https";
 import { CreateEventCommand, CreateEventRequest } from "@/src/application/features/events/commands/create-event/create-event.command";
 import { DeleteEventCommand } from "@/src/application/features/events/commands/delete-event/delete-event.command";
 import { UpdateEventCommand, UpdateEventRequest } from "@/src/application/features/events/commands/update-event/update-event.command";
+import { GetEventDetailQuery } from "@/src/application/features/events/queries/get-detail/get-detail.query";
 import { SearchEventQuery, SearchEventRequest } from "@/src/application/features/events/queries/search/search.query";
 import { CategoryId, Role } from "@/src/domain/value-objects";
 import { JwtAuthGuard } from "@/src/infrastracture/auth";
@@ -29,6 +30,16 @@ export class EventBackofficeController {
       request.page || 1,
       request.pageSize || 20
     );
+    const result = await this.queryBus.execute(query);
+    return ApiResponseFactory.ok(result);
+  }
+
+  @Get(':id')
+  @Permission(Role.admin)
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
+  async getEventDetail(@Param('id') id: string) {
+    const query = new GetEventDetailQuery(id);
     const result = await this.queryBus.execute(query);
     return ApiResponseFactory.ok(result);
   }
