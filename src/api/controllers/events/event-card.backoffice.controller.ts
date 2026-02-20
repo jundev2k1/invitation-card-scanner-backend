@@ -2,6 +2,7 @@ import { Permission, PermissionGuard } from "@/src/application/common/https";
 import { CreateEventCardCommand, CreateEventCardRequest } from "@/src/application/features/event-cards/commands/create-card/create-card.command";
 import { DeleteEventCardCommand } from "@/src/application/features/event-cards/commands/delete-card/delete-card.command";
 import { UpdateEventCardCommand, UpdateEventCardRequest } from "@/src/application/features/event-cards/commands/update-card/update-card.command";
+import { GetEventCardDetailQuery } from "@/src/application/features/event-cards/queries/get-detail/get-detail.query";
 import { SearchEventCardsQuery, SearchEventCardsRequest } from "@/src/application/features/event-cards/queries/search/search.query";
 import { Role } from "@/src/domain/value-objects";
 import { JwtAuthGuard } from "@/src/infrastracture/auth";
@@ -32,6 +33,17 @@ export class EventCardBackofficeController {
       request.page || 1,
       request.pageSize || 20
     );
+    const result = await this.queryBus.execute(query);
+    return ApiResponseFactory.ok(result);
+  }
+
+  @Get(':cardId')
+  @Permission(Role.admin, Role.staff)
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
+  @ApiParam({ name: 'cardId', type: String, format: 'uuid' })
+  async getEventCardDetail(@Param('id') eventId: string, @Param('cardId') cardId: string) {
+    const query = new GetEventCardDetailQuery(eventId, cardId);
     const result = await this.queryBus.execute(query);
     return ApiResponseFactory.ok(result);
   }
