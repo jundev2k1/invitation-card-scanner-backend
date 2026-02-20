@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS events
 (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  category_id VARCHAR(20) NOT NULL REFERENCES event_categories(id),
+  category_id VARCHAR(20) REFERENCES event_categories(id),
   title VARCHAR(255) NOT NULL,
   "description" TEXT NOT NULL DEFAULT '' ,
   start_at TIMESTAMP WITH TIME ZONE NOT NULL,

@@ -1,4 +1,6 @@
 import { EventDetailDto } from "@/src/application/features/events/dtos/event-detail.dto";
+import { Event } from "@/src/domain/entities";
+import { CategoryId } from "@/src/domain/value-objects";
 import { PaginatedResult } from "src/application/common";
 import { EventSearchItem } from "src/application/features/events/dtos";
 
@@ -53,3 +55,21 @@ export const mapToDetail = (data: any): EventDetailDto => {
     new Date(data.updated_at),
   )
 } 
+
+export const mapToEventEntity = (data: any): Event => {
+  return new Event(
+    data.id,
+    data.category_id ? CategoryId.of(data.category_id) : null,
+    data.title,
+    data.description,
+    new Date(data.start_at),
+    data.end_at ? new Date(data.end_at) : null,
+    data.location_name,
+    data.address,
+    data.map_url,
+    data.thumbnail_url,
+    data.status,
+    new Date(data.created_at),
+    new Date(data.updated_at)
+  );
+}

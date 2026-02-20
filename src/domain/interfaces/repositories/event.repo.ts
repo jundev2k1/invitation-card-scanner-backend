@@ -1,5 +1,4 @@
 import { EventSearchItem } from "@/src/application/features/events/dtos";
-import { EventDetailDto } from "@/src/application/features/events/dtos/event-detail.dto";
 import { PaginatedResult } from "src/application/common";
 import { Event } from "src/domain/entities";
 
@@ -16,7 +15,7 @@ export interface IEventRepo {
     limit: number
   ): Promise<PaginatedResult<EventSearchItem>>;
 
-  findById(id: string): Promise<EventDetailDto | null>;
+  getById(id: string): Promise<Event | null>;
 
   create(input: Event): Promise<void>;
 
