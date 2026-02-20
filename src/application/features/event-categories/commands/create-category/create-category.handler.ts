@@ -21,7 +21,7 @@ export class CreateCategoryHandler {
 
     const isExistSlug = await this.repoFacade.eventCategory.isExistSlug(request.slug);
     if (isExistSlug) throw BadRequestException.validationError(`Slug (${request.slug}) already exists`);
-    
+
     const category = EventCategory.create({
       id: request.id,
       name: request.name,
@@ -32,7 +32,7 @@ export class CreateCategoryHandler {
       sortOrder: request.sortOrder
     });
     await this.unitOfWork.withTransaction(async () => {
-      this.repoFacade.eventCategory.create(category);
+      await this.repoFacade.eventCategory.create(category);
     });
   }
 }
