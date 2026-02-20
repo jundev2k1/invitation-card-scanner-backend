@@ -1,5 +1,6 @@
 import { PaginatedResult } from "@/src/application/common";
 import { EventCardDto } from "@/src/application/features/event-cards/dtos";
+import { EventCard } from "@/src/domain/entities";
 
 export const mapToEventCardSearchResult = (
   data: readonly any[],
@@ -30,3 +31,18 @@ export const mapToEventCardSearchResult = (
     pageSize
   );
 };
+
+export function mapToEventCardEntity(data: any): EventCard {
+  return new EventCard(
+    data.id,
+    data.event_id,
+    data.guest_name,
+    data.access_token,
+    data.is_used,
+    data.first_scanned_at ? new Date(data.first_scanned_at) : null,
+    data.status,
+    data.notes,
+    new Date(data.created_at),
+    new Date(data.updated_at)
+  );
+}

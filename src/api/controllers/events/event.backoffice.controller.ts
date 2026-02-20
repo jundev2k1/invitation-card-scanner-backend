@@ -1,5 +1,6 @@
 import { Permission, PermissionGuard } from "@/src/application/common/https";
 import { CreateEventCardCommand, CreateEventCardRequest } from "@/src/application/features/event-cards/commands/create-card/create-card.command";
+import { UpdateEventCardCommand, UpdateEventCardRequest } from "@/src/application/features/event-cards/commands/update-card/update-card.command";
 import { CreateEventCommand, CreateEventRequest } from "@/src/application/features/events/commands/create-event/create-event.command";
 import { DeleteEventCommand } from "@/src/application/features/events/commands/delete-event/delete-event.command";
 import { UpdateEventCommand, UpdateEventRequest } from "@/src/application/features/events/commands/update-event/update-event.command";
@@ -100,6 +101,26 @@ export class EventBackofficeController {
       request.address?.trim() || '',
       request.mapUrl?.trim() || '',
       request.thumbnailUrl?.trim() || ''
+    );
+    await this.commandBus.execute(command);
+    return ApiResponseFactory.noContent();
+  }
+
+  @Put(':id/cards/:cardId')
+  @Permission(Role.admin)
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
+  @ApiParam({ name: 'cardId', type: String, format: 'uuid' })
+  async updateEventCard(
+    @Param('id') eventId: string,
+    @Param('cardId') cardId: string,
+    @Body() request: UpdateEventCardRequest
+  ) {
+    const command = new UpdateEventCardCommand(
+      eventId,
+      cardId,
+      request.guestName.trim(),
+      request.notes.trim()
     );
     await this.commandBus.execute(command);
     return ApiResponseFactory.noContent();

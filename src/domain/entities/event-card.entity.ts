@@ -39,6 +39,11 @@ export class EventCard {
     );
   }
 
+  public updateCardInfo(guestName: string, notes: string): void {
+    this.guestName = guestName.trim();
+    this.notes = notes.trim();
+  }
+
   public rotateAccessToken(): void {
     this.accessToken = UUIdHelper.createUUIDv7();
   }

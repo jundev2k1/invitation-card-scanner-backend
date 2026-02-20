@@ -6,7 +6,7 @@ import { IEventCardRepo } from "@/src/domain/interfaces/repositories/event-card.
 import { Inject } from "@nestjs/common";
 import { type DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { transactionStorage } from "../../database";
-import { mapToEventCardSearchResult } from "./event-card.mapping";
+import { mapToEventCardEntity, mapToEventCardSearchResult } from "./event-card.mapping";
 
 export class EventCardRepo implements IEventCardRepo {
   private get dbContext(): DatabaseTransactionConnection | DatabasePool {
@@ -31,6 +31,15 @@ export class EventCardRepo implements IEventCardRepo {
       ${pageSize})`;
     const { rows } = await this.dbContext.query(query);
     return mapToEventCardSearchResult(rows, page, pageSize);
+  }
+
+  async getById(id: string): Promise<EventCard | null> {
+    const query = sql.unsafe`SELECT * FROM get_event_card_by_id(${id})`;
+    const { rows } = await this.dbContext.query(query);
+    
+    return rows.length > 0
+      ? mapToEventCardEntity(rows[0])
+      : null;
   }
 
   async create(eventCard: EventCard): Promise<void> {

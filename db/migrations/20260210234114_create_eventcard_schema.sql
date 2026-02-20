@@ -74,6 +74,21 @@ BEGIN
 END;
 $$;
 
+-- Function: get_event_card_by_id
+CREATE OR REPLACE FUNCTION get_event_card_by_id
+(
+  p_id UUID
+)
+RETURNS SETOF event_cards
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+  SELECT  *
+    FROM  event_cards
+   WHERE  id = p_id;
+END;
+$$;
+
 -- Function: create_event_card
 CREATE OR REPLACE FUNCTION create_event_card
 (
