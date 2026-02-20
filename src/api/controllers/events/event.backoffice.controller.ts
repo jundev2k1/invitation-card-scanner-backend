@@ -1,9 +1,10 @@
 import { Permission, PermissionGuard } from "@/src/application/common/https";
 import { CreateEventCommand, CreateEventRequest } from "@/src/application/features/events/commands/create-event/create-event.command";
+import { DeleteEventCommand } from "@/src/application/features/events/commands/delete-event/delete-event.command";
 import { UpdateEventCommand, UpdateEventRequest } from "@/src/application/features/events/commands/update-event/update-event.command";
 import { CategoryId, Role } from "@/src/domain/value-objects";
 import { JwtAuthGuard } from "@/src/infrastracture/auth";
-import { Body, Controller, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "../../common";
@@ -57,6 +58,16 @@ export class EventBackofficeController {
       request.mapUrl?.trim() || '',
       request.thumbnailUrl?.trim() || ''
     );
+    await this.commandBus.execute(command);
+    return ApiResponseFactory.noContent();
+  }
+
+  @Delete(':id')
+  @Permission(Role.admin)
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
+  async deleteEvent(@Param('id') id: string) {
+    const command = new DeleteEventCommand(id);
     await this.commandBus.execute(command);
     return ApiResponseFactory.noContent();
   }
