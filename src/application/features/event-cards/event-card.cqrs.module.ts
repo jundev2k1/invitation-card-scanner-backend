@@ -4,8 +4,10 @@ import { Module } from "@nestjs/common";
 import { CreateEventCardHandler } from "./commands/create-card/create-card.handler";
 import { DeleteEventCardHandler } from "./commands/delete-card/delete-card.handler";
 import { UpdateEventCardHandler } from "./commands/update-card/update-card.handler";
+import { SearchEventCardsHandler } from "./queries/search/search.handler";
 
 const queries = [
+  SearchEventCardsHandler,
 ];
 
 const commands = [

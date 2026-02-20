@@ -1,7 +1,4 @@
 import { Permission, PermissionGuard } from "@/src/application/common/https";
-import { CreateEventCardCommand, CreateEventCardRequest } from "@/src/application/features/event-cards/commands/create-card/create-card.command";
-import { DeleteEventCardCommand } from "@/src/application/features/event-cards/commands/delete-card/delete-card.command";
-import { UpdateEventCardCommand, UpdateEventCardRequest } from "@/src/application/features/event-cards/commands/update-card/update-card.command";
 import { CreateEventCommand, CreateEventRequest } from "@/src/application/features/events/commands/create-event/create-event.command";
 import { DeleteEventCommand } from "@/src/application/features/events/commands/delete-event/delete-event.command";
 import { UpdateEventCommand, UpdateEventRequest } from "@/src/application/features/events/commands/update-event/update-event.command";
@@ -25,7 +22,7 @@ export class EventBackofficeController {
   ) { }
 
   @Get()
-  @Permission(Role.admin)
+  @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   async searchEvents(@Query() request: SearchEventRequest) {
     const query = new SearchEventQuery(
@@ -38,7 +35,7 @@ export class EventBackofficeController {
   }
 
   @Get(':id')
-  @Permission(Role.admin)
+  @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
   async getEventDetail(@Param('id') id: string) {
@@ -61,23 +58,6 @@ export class EventBackofficeController {
       request.address?.trim() || '',
       request.mapUrl?.trim() || '',
       request.thumbnailUrl?.trim() || ''
-    );
-    await this.commandBus.execute(command);
-    return ApiResponseFactory.created();
-  }
-
-  @Post(':id/cards')
-  @Permission(Role.admin)
-  @HttpCode(HttpStatus.OK)
-  @ApiParam({ name: 'id', type: String, format: 'uuid' })
-  async createEventCard(
-    @Param('id') eventId: string,
-    @Body() request: CreateEventCardRequest
-  ) {
-    const command = new CreateEventCardCommand(
-      eventId,
-      request.guestName.trim(),
-      request.notes.trim()
     );
     await this.commandBus.execute(command);
     return ApiResponseFactory.created();
@@ -107,43 +87,12 @@ export class EventBackofficeController {
     return ApiResponseFactory.noContent();
   }
 
-  @Put(':id/cards/:cardId')
-  @Permission(Role.admin)
-  @HttpCode(HttpStatus.OK)
-  @ApiParam({ name: 'id', type: String, format: 'uuid' })
-  @ApiParam({ name: 'cardId', type: String, format: 'uuid' })
-  async updateEventCard(
-    @Param('id') eventId: string,
-    @Param('cardId') cardId: string,
-    @Body() request: UpdateEventCardRequest
-  ) {
-    const command = new UpdateEventCardCommand(
-      eventId,
-      cardId,
-      request.guestName.trim(),
-      request.notes.trim()
-    );
-    await this.commandBus.execute(command);
-    return ApiResponseFactory.noContent();
-  }
-
   @Delete(':id')
   @Permission(Role.admin)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
   async deleteEvent(@Param('id') id: string) {
     const command = new DeleteEventCommand(id);
-    await this.commandBus.execute(command);
-    return ApiResponseFactory.noContent();
-  }
-
-  @Delete(':id/cards/:cardId')
-  @Permission(Role.admin)
-  @HttpCode(HttpStatus.OK)
-  @ApiParam({ name: 'id', type: String, format: 'uuid' })
-  @ApiParam({ name: 'cardId', type: String, format: 'uuid' })
-  async deleteEventCard(@Param('id') eventId: string, @Param('cardId') cardId: string) {
-    const command = new DeleteEventCardCommand(eventId, cardId);
     await this.commandBus.execute(command);
     return ApiResponseFactory.noContent();
   }

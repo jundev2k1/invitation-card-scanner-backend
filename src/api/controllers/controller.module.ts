@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { CqrsModule } from "@nestjs/cqrs";
 import { SecurityModule } from "src/infrastracture/security/security.module";
 import { AuthController } from "./auth.controller";
+import { EventCardBackofficeController } from "./events/event-card.backoffice.controller";
 import { EventCategoryBackofficeController } from "./events/event-category.backoffice.controller";
 import { EventBackofficeController } from "./events/event.backoffice.controller";
 import { UserBackofficeController } from "./users/user.backoffice.controller";
@@ -20,6 +21,9 @@ const controllers = [
 
   // Event Controllers
   EventBackofficeController,
+
+  // EventCard Controllers
+  EventCardBackofficeController,
 ];
 
 @Module({

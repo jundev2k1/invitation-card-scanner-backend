@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsOptional } from "class-validator";
 
-export class SearchEventRequest {
+export class SearchEventCardsRequest {
   @ApiProperty({ example: '', required: false })
   @IsOptional()
   public readonly keyword?: string = '';
@@ -18,8 +18,9 @@ export class SearchEventRequest {
   public readonly pageSize?: number = 20;
 }
 
-export class SearchEventQuery {
+export class SearchEventCardsQuery {
   constructor(
+    public readonly eventId: string,
     public readonly keyword: string,
     public readonly page: number,
     public readonly pageSize: number
