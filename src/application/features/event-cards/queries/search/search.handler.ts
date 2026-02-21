@@ -2,11 +2,12 @@ import { PaginatedResult } from "@/src/application/common";
 import { REPO_FACADE } from "@/src/common/tokens";
 import { RepositoryFacade } from "@/src/infrastracture/repositories";
 import { Inject } from "@nestjs/common";
-import { IQueryHandler } from "@nestjs/cqrs";
+import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { EventCardtSearchItemDto } from "../../dtos/event-card-search-item.dto";
 import { mapToSearchResultSummary } from "../../mapping/event-card.mapping";
 import { SearchEventCardsQuery } from "./search.query";
 
+@QueryHandler(SearchEventCardsQuery)
 export class SearchEventCardsHandler
   implements IQueryHandler<SearchEventCardsQuery, PaginatedResult<EventCardtSearchItemDto>> {
     

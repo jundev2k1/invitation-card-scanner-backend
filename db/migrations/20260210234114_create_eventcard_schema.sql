@@ -60,15 +60,25 @@ RETURNS TABLE (
 LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
-  SELECT  *
-    FROM  event_cards
-   WHERE  event_id = p_event_id
+  SELECT  ec.id,
+          ec.event_id,
+          ec.guest_name,
+          ec.access_token,
+          ec.is_used,
+          ec.first_scanned_at,
+          ec."status",
+          ec.notes,
+          ec.created_at,
+          ec.updated_at,
+          (COUNT(*) OVER ())::int AS total_count
+    FROM  event_cards ec
+   WHERE  ec.event_id = p_event_id
      AND  (
             p_keyword IS NULL
             OR
             p_keyword = ''
             OR
-            search_vector @@ to_tsquery('simple', p_keyword)
+            ec.search_vector @@ to_tsquery('simple', p_keyword)
           )
    LIMIT  p_limit OFFSET p_offset;
 END;
