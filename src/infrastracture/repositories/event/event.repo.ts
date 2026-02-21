@@ -2,6 +2,7 @@ import { PaginatedResult } from '@/src/application/common';
 import { EventSearchItem } from '@/src/application/features/events/dtos';
 import { POSTGRES_POOL } from '@/src/common/tokens';
 import { Event } from '@/src/domain/entities';
+import { EventStatus } from '@/src/domain/enums';
 import { IEventRepo } from '@/src/domain/interfaces/repositories/event.repo';
 import { Inject } from '@nestjs/common';
 import { type DatabasePool, DatabaseTransactionConnection, sql } from 'slonik';
@@ -88,6 +89,11 @@ export class EventRepo implements IEventRepo {
       ${params.status},
       ${params.updatedAt.toISOString()}
     )`;
+    await this.dbContext.query(query);
+  }
+
+  async updateStatus(id: string, status: EventStatus): Promise<void> {
+    const query = sql.unsafe`SELECT update_event_status(${id},${status})`;
     await this.dbContext.query(query);
   }
 

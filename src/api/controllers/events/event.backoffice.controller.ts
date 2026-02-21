@@ -1,12 +1,15 @@
+import { BadRequestException } from "@/src/application/common";
 import { Permission, PermissionGuard } from "@/src/application/common/https";
 import { CreateEventCommand, CreateEventRequest } from "@/src/application/features/events/commands/create-event/create-event.command";
 import { DeleteEventCommand } from "@/src/application/features/events/commands/delete-event/delete-event.command";
+import { UpdateEventStatusCommand } from "@/src/application/features/events/commands/update-event-status/update-event-status.command";
 import { UpdateEventCommand, UpdateEventRequest } from "@/src/application/features/events/commands/update-event/update-event.command";
 import { GetEventDetailQuery } from "@/src/application/features/events/queries/get-detail/get-detail.query";
 import { SearchEventQuery, SearchEventRequest } from "@/src/application/features/events/queries/search/search.query";
+import { EventStatus } from "@/src/domain/enums";
 import { CategoryId, Role } from "@/src/domain/value-objects";
 import { JwtAuthGuard } from "@/src/infrastracture/auth";
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "../../common";
@@ -83,6 +86,27 @@ export class EventBackofficeController {
       request.mapUrl?.trim() || '',
       request.thumbnailUrl?.trim() || ''
     );
+    await this.commandBus.execute(command);
+    return ApiResponseFactory.noContent();
+  }
+
+  @Patch(':id/status/:status')
+  @Permission(Role.admin)
+  @HttpCode(HttpStatus.OK)
+  async updateEventStatus(
+    @Param('id') id: string,
+    @Param('status') status: string
+  ) {
+    const statuses = {
+      [EventStatus.DRAFT]: EventStatus.DRAFT,
+      [EventStatus.PUBLISHED]: EventStatus.PUBLISHED,
+      [EventStatus.COMPLETED]: EventStatus.COMPLETED,
+      [EventStatus.CANCELLED]: EventStatus.CANCELLED
+    };
+    const eventStatus = statuses[status];
+    if (!eventStatus) throw BadRequestException.validationError(`Status (${status}) is invalid`);
+
+    const command = new UpdateEventStatusCommand(id, eventStatus);
     await this.commandBus.execute(command);
     return ApiResponseFactory.noContent();
   }

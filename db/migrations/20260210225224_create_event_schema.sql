@@ -240,6 +240,21 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION update_event_status
+(
+  p_id UUID,
+  p_status SMALLINT
+)
+RETURNS VOID
+LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE  events
+     SET  "status" = p_status,
+          updated_at = CURRENT_TIMESTAMP
+   WHERE  id = p_id;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION delete_event
 (
   p_id UUID
@@ -267,4 +282,5 @@ DROP FUNCTION IF EXISTS search_events_by_category;
 DROP FUNCTION IF EXISTS get_event_by_id;
 DROP FUNCTION IF EXISTS create_event;
 DROP FUNCTION IF EXISTS update_event;
+DROP FUNCTION IF EXISTS update_event_status;
 DROP FUNCTION IF EXISTS delete_event;
