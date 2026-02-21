@@ -66,8 +66,9 @@ export class EventRepo implements IEventRepo {
       ${params.address},
       ${params.mapUrl},
       ${params.thumbnailUrl},
-      "{}",
-      ${params.status})`;
+      ${sql.jsonb({})},
+      ${params.status}
+    )`;
     await this.dbContext.query(query);
   }
 
@@ -83,8 +84,10 @@ export class EventRepo implements IEventRepo {
       ${params.address},
       ${params.mapUrl},
       ${params.thumbnailUrl},
-      "{}",
-      ${params.status})`;
+      ${sql.jsonb({})},
+      ${params.status},
+      ${params.updatedAt.toISOString()}
+    )`;
     await this.dbContext.query(query);
   }
 

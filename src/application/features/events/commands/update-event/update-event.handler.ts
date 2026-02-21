@@ -23,11 +23,13 @@ export class UpdateEventHandler implements ICommandHandler<UpdateEventCommand> {
         request.description,
         targetEvent.thumbnailUrl
       );
+      targetEvent.updateCategory(request.categoryId);
       targetEvent.updateLocation(
         request.locationName,
         request.address,
         request.mapUrl
       );
+      targetEvent.reschedule(request.startAt, request.endAt);
       targetEvent.updateUpdatedAt();
       await this.repoFacade.event.update(targetEvent);
     });

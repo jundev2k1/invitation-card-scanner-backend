@@ -2,7 +2,7 @@ import { Must } from "@/src/application/common/validators";
 import { CategoryId } from "@/src/domain/value-objects";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsNotEmpty, MaxLength } from "class-validator";
+import { IsDate, IsNotEmpty, IsOptional, MaxLength } from "class-validator";
 
 export class UpdateEventRequest {
   @ApiProperty({ example: 'ROOT' })
@@ -19,10 +19,13 @@ export class UpdateEventRequest {
   public description: string = '';
 
   @ApiProperty({ example: '2022-01-01T00:00:00.000Z' })
+  @IsDate()
   @Type(() => Date)
   public startAt: Date = new Date();
-  
+
   @ApiProperty({ example: '2022-01-01T00:00:00.000Z' })
+  @IsOptional()
+  @IsDate()
   @Type(() => Date)
   public endAt: Date | null = null;
 

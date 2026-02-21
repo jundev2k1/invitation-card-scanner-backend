@@ -1,6 +1,7 @@
 export enum EventStatus {
-  DRAFT = 0,
-  PUBLISHED = 1,
-  CANCELLED = 2,
+  DELETED = 0,
+  DRAFT = 1,
+  PUBLISHED = 2,
   COMPLETED = 3,
+  CANCELLED = 4,
 }

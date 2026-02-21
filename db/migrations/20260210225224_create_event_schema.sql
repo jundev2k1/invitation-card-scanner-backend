@@ -77,10 +77,14 @@ BEGIN
           e.status,
           e.created_at,
           e.updated_at,
-          COUNT(*) OVER () AS total_count
-    FROM  events
-   WHERE  events.status = 1
-     AND  search_vector @@ plainto_tsquery('simple', p_keyword)
+          (COUNT(*) OVER ())::int AS total_count
+    FROM  events AS e
+   WHERE  "status" <> 0;
+     AND  (
+            p_keyword = ''
+            OR
+            e.search_vector @@ plainto_tsquery('simple', p_keyword)
+          )
    LIMIT  p_limit OFFSET p_offset;
 END
 $$;
@@ -122,10 +126,10 @@ BEGIN
           e.status,
           e.created_at,
           e.updated_at,
-          COUNT(*) OVER () AS total_count
-    FROM  events
-   WHERE  events.status = 1
-     AND  category_id = p_category_id
+          (COUNT(*) OVER ())::int AS total_count
+    FROM  events AS e
+   WHERE  e.category_id = p_category_id
+     AND  "status" <> 0
    LIMIT  p_limit OFFSET p_offset;
 END
 $$;
@@ -140,7 +144,8 @@ BEGIN
   RETURN QUERY
   SELECT  *
     FROM  events
-   WHERE  id = p_id;
+   WHERE  id = p_id
+     AND  "status" <> 0;
 END;
 $$;
 
@@ -175,7 +180,9 @@ BEGIN
     map_url,
     thumbnail_url,
     settings,
-    "status"
+    "status",
+    created_at,
+    updated_at
   )
   VALUES
   (
@@ -190,7 +197,9 @@ BEGIN
     p_map_url,
     p_thumbnail_url,
     p_settings,
-    p_status
+    p_status,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
   );
 END;
 $$;
@@ -208,7 +217,8 @@ CREATE OR REPLACE FUNCTION update_event
   p_map_url VARCHAR,
   p_thumbnail_url VARCHAR,
   p_settings JSONB,
-  p_status SMALLINT
+  p_status SMALLINT,
+  p_updated_at TIMESTAMPTZ
 )
 RETURNS VOID
 LANGUAGE plpgsql AS $$

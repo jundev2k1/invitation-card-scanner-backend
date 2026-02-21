@@ -56,6 +56,10 @@ export class Event extends BaseEntity<string> {
     );
   }
 
+  public updateCategory(categoryId: CategoryId | null): void {
+    this.categoryId = categoryId;
+  }
+
   public updateBasicInfo(
     title: string,
     description: string,

@@ -4,10 +4,10 @@ import { RepositoryFacade } from "@/src/infrastracture/repositories";
 import { Inject } from "@nestjs/common";
 import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { EventSearchItem } from "../../dtos";
-import { SearchEventRequest } from "./search.query";
+import { SearchEventQuery, SearchEventRequest } from "./search.query";
 
-@QueryHandler(SearchEventRequest)
-export class SearchEventHandler implements IQueryHandler<SearchEventRequest, PaginatedResult<EventSearchItem>> {
+@QueryHandler(SearchEventQuery)
+export class SearchEventHandler implements IQueryHandler<SearchEventQuery, PaginatedResult<EventSearchItem>> {
   constructor(
     @Inject(REPO_FACADE) private readonly repoFacade: RepositoryFacade
   ) { }
