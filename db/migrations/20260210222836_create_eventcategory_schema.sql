@@ -67,7 +67,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_all_active_event_categories
+CREATE OR REPLACE FUNCTION get_all_active_event_categories()
 RETURNS SETOF event_categories
 LANGUAGE plpgsql AS $$
 BEGIN

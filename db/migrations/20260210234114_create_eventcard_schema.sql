@@ -184,5 +184,4 @@ DROP FUNCTION IF EXISTS create_event_card;
 DROP FUNCTION IF EXISTS update_event_card;
 DROP FUNCTION IF EXISTS delete_event_card;
 
-DROP TRIGGER IF EXISTS trg_event_cards_search_update;
-DROP FUNCTION IF EXISTS event_cards_search_vector_trigger;
+DROP TRIGGER IF EXISTS event_cards_search_vector_trigger;

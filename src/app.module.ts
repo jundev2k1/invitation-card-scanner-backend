@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
+import { ApiModule } from './api/api.module';
+import { ApplicationModule } from './application/application.module';
+import { DomainModule } from './domain/domain.module';
 import { validate } from './infrastracture/config/app-config.validation';
 import { InfrastructureModule } from './infrastracture/infrastructure.module';
-import { ApplicationModule } from './application/application.module';
-import { ApiModule } from './api/api.module';
-import { DomainModule } from './domain/domain.module';
-import { CqrsModule } from '@nestjs/cqrs';
 
 const providers = [
   DomainModule,
@@ -16,7 +16,14 @@ const providers = [
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, validate }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validate,
+      envFilePath: [
+        `.env.${process.env.NODE_ENV || 'development'}`,
+        '.env',
+      ],
+    }),
     CqrsModule.forRoot(),
     ...providers
   ]
