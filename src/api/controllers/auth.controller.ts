@@ -25,7 +25,6 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() request: RegisterRequest) {
-    console.log(1);
     const command = new RegisterCommand(
       UserName.of(request.username),
       Email.of(request.email),

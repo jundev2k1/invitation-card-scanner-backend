@@ -27,8 +27,8 @@ export class EventCategoryBackofficeController {
     const query = new SearchCategoriesQuery(
       parameters.parentId || '',
       parameters.id || '',
-      parameters.keyword || '');
-      console.log(query);
+      parameters.keyword || ''
+    );
     const result = await this.queryBus.execute(query);
     return ApiResponseFactory.ok(result);
   }

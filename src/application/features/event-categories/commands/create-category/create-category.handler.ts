@@ -4,8 +4,10 @@ import { EventCategory } from "@/src/domain/entities";
 import { UnitOfWork } from "@/src/infrastracture/database";
 import { RepositoryFacade } from "@/src/infrastracture/repositories";
 import { Inject } from "@nestjs/common";
+import { CommandHandler } from "@nestjs/cqrs";
 import { CreateCategoryCommand } from "./create-category.command";
 
+@CommandHandler(CreateCategoryCommand)
 export class CreateCategoryHandler {
   constructor(
     @Inject(UNIT_OF_WORK) private readonly unitOfWork: UnitOfWork,
@@ -13,7 +15,8 @@ export class CreateCategoryHandler {
   ) { }
 
   async execute(request: CreateCategoryCommand) {
-    const isExistParentId = await this.repoFacade.eventCategory.isExistParent(request.parentId.value);
+    const isExistParentId = request.parentId.isRoot
+      || await this.repoFacade.eventCategory.isExistParent(request.parentId.value);
     if (!isExistParentId) throw BadRequestException.validationError(`ParentID (${request.parentId.value}) does not exist`);
 
     const isExistId = await this.repoFacade.eventCategory.isExistId(request.id.value);

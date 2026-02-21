@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS event_categories
 (
   id VARCHAR(20) PRIMARY KEY, 
-  parent_id VARCHAR(20) REFERENCES event_categories(id) ON DELETE CASCADE,
+  parent_id VARCHAR(20),
   "name" VARCHAR(100) NOT NULL,
   slug VARCHAR(120) UNIQUE NOT NULL,
   "description" VARCHAR(500) NOT NULL DEFAULT '',

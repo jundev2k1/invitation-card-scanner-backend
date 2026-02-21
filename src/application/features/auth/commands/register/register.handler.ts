@@ -19,25 +19,20 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
   ) { }
 
   async execute(request: RegisterCommand): Promise<void> {
-    console.log(2);
     // Check if email exists
     const isExistEmail = await this.repoFacade.user.isExistEmail(request.email.value);
     if (isExistEmail) throw BadRequestException.create(ApiMessages.USER_EMAIL_ALREADY_EXISTS);
 
-    console.log(3);
     // Check if username exists
     const isExistUsername = await this.repoFacade.user.isExistUsername(request.username.value);
     if (isExistUsername) throw BadRequestException.create(ApiMessages.USER_USERNAME_ALREADY_EXISTS);
 
-    console.log(4);
     // Hash password and create user entity
     const hashPassword = await this.passwordHasher.hash(request.password.value);
     const userEntity = this.createUser(request, hashPassword);
 
-    console.log(5);
     // Create user from database
     await this.repoFacade.user.create(userEntity);
-    console.log(6);
   }
 
   private createUser(request: RegisterCommand, hashPassword: string): User {
