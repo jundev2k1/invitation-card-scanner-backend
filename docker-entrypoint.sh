@@ -6,4 +6,4 @@ yarn migrate:up:prod
 yarn seed:prod
 
 echo "🚀 Starting NestJS API..."
-exec node dist/src/main.js
+exec node dist/main.js
