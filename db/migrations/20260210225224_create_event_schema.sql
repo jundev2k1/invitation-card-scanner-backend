@@ -79,7 +79,7 @@ BEGIN
           e.updated_at,
           (COUNT(*) OVER ())::int AS total_count
     FROM  events AS e
-   WHERE  "status" <> 0;
+   WHERE  e.status <> 0
      AND  (
             p_keyword = ''
             OR
