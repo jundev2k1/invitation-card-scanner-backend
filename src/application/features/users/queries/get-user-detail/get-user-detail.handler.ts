@@ -3,7 +3,7 @@ import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { REPO_FACADE } from "src/common/tokens";
 import { NotFoundException } from "src/domain/exceptions";
 import { RepositoryFacade } from "src/infrastracture/repositories";
-import { UserDetailDto } from "../../dtos/user-detail.dto";
+import { UserDetailDto } from "../../dtos";
 import { mapToUserDetail } from "../../mapping";
 import { GetUserDetailQuery } from "./get-user-detail.query";
 

@@ -1,5 +1,5 @@
 import { PaginatedResult } from "src/application/common";
-import { UserSearchItem } from "src/application/features/users/dtos/user-search-item.dto";
+import { UserSearchItem } from "src/application/features/users/dtos";
 import { User } from "src/domain/entities";
 import { UserStatus } from "src/domain/enums";
 import { UUID } from "uuidv7";

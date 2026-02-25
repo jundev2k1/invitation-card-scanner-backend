@@ -1,5 +1,5 @@
 import { User } from "src/domain/entities";
-import { UserDetailDto } from "../dtos/user-detail.dto";
+import { UserDetailDto } from "../dtos";
 
 export const mapToUserDetail = (user: User): UserDetailDto =>
   new UserDetailDto(

@@ -29,11 +29,11 @@ RETURNS TABLE
 (
   id UUID,
   card_id UUID,
-  scanned_by UUID,
+  scanned_by_id UUID,
   scanned_by_nickname VARCHAR,
   scanned_by_email VARCHAR,
-  scanned_by_phone VARCHAR,
-  scanned_by_status SMALLINT,
+  scanned_by_phone_number VARCHAR,
+  scanned_by_avatar_url VARCHAR,
   scanned_at TIMESTAMPTZ,
   notes TEXT,
   total_count INT
@@ -43,11 +43,11 @@ BEGIN
   RETURN QUERY
   SELECT  ecl.id,
           ecl.card_id,
-          ecl.scanned_by,
-          u.nickname,
-          u.email,
-          u.phone_number,
-          u.status,
+          ecl.scanned_by AS scanned_by_id,
+          u.nickname AS scanned_by_nickname,
+          u.email AS scanned_by_email,
+          u.phone_number AS scanned_by_phone_number,
+          u.avatar_url AS scanned_by_avatar_url,
           ecl.scanned_at,
           ecl.notes,
           COUNT(*) OVER () AS total_count
