@@ -28,7 +28,7 @@ export class EventCardLogRepo implements IEventCardLogRepo {
     pageSize: number
   ): Promise<PaginatedResult<EventCardLogDto>> {
     const offset = (page - 1) * pageSize;
-    const query = sql.unsafe`SELECT * FROM search_event_card_logs_by_criteria(
+    const query = sql.unsafe`SELECT * FROM get_event_card_logs_by_criteria(
       ${params.cardId ?? null},
       ${params.scannedBy ?? null},
       ${params.scannedFrom?.toISOString() ?? null},
