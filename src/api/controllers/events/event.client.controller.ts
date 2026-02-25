@@ -13,7 +13,7 @@ import { ApiResponseFactory } from "../../common";
 @Controller('api/events')
 @UseGuards(JwtAuthGuard, PermissionGuard)
 @ApiBearerAuth('access-token')
-export class EventCardClientController {
+export class EventClientController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
