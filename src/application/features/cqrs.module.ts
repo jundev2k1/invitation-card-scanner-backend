@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AuthCqrsModule } from "./auth/auth.cqrs.module";
+import { EventCardLogCqrsModule } from "./event-card-logs/event-card-log.cqrs.module";
 import { EventCardCqrsModule } from "./event-cards/event-card.cqrs.module";
 import { EventCategoryCqrsModule } from "./event-categories/event-category.cqrs.module";
 import { EventCqrsModule } from "./events/event.cqrs.module";
@@ -11,6 +12,7 @@ const providers = [
   EventCategoryCqrsModule,
   EventCqrsModule,
   EventCardCqrsModule,
+  EventCardLogCqrsModule,
 ];
 
 @Module({
