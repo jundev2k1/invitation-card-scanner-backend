@@ -97,7 +97,7 @@ BEGIN
     FROM  event_cards
    WHERE  id = p_id;
 END;
-$$
+$$;
 
 -- Function: get_event_card_by_access_token
 CREATE OR REPLACE FUNCTION get_event_card_by_access_token
@@ -112,7 +112,7 @@ BEGIN
     FROM  event_cards
    WHERE  access_token = p_token;
 END;
-$$;;
+$$;
 
 -- Function: create_event_card
 CREATE OR REPLACE FUNCTION create_event_card
