@@ -6,12 +6,16 @@ import { EventCardBackofficeController } from "./events/event-card.backoffice.co
 import { EventCardClientController } from "./events/event-card.client.controller";
 import { EventCategoryBackofficeController } from "./events/event-category.backoffice.controller";
 import { EventBackofficeController } from "./events/event.backoffice.controller";
+import { ScanClientController } from "./scans/scan.client.controller";
 import { UserBackofficeController } from "./users/user.backoffice.controller";
 import { UserClientController } from "./users/user.client.controller";
 
 const controllers = [
   // Auth Controllers
   AuthController,
+
+  // Scan Controllers
+  ScanClientController,
 
   // User Controllers
   UserClientController,

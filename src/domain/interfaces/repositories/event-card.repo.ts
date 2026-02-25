@@ -7,6 +7,8 @@ export interface IEventCardRepo {
 
   getById(id: string): Promise<EventCard | null>;
 
+  getByAccessToken(token: string): Promise<EventCard | null>;
+
   create(eventCard: EventCard): Promise<void>;
 
   update(eventCard: EventCard): Promise<void>;

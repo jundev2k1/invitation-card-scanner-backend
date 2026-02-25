@@ -7,17 +7,17 @@ import { RepositoryFacade } from "@/src/infrastracture/repositories";
 import { UserAccessor } from "@/src/infrastracture/security";
 import { Inject } from "@nestjs/common";
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { ScanCardCommand } from "./scan-card.command";
+import { CheckInCardCommand } from "./check-in.command";
 
-@CommandHandler(ScanCardCommand)
-export class ScanCardHandler implements ICommandHandler<ScanCardCommand> {
+@CommandHandler(CheckInCardCommand)
+export class CheckInCardHandler implements ICommandHandler<CheckInCardCommand> {
   constructor(
     @Inject(USER_ACCESSOR) private readonly userAccessor: UserAccessor,
     @Inject(UNIT_OF_WORK) private readonly unitOfWork: UnitOfWork,
     @Inject(REPO_FACADE) private readonly repoFacade: RepositoryFacade
   ) { }
 
-  async execute(request: ScanCardCommand): Promise<void> {
+  async execute(request: CheckInCardCommand): Promise<void> {
     // Check if event card exists
     const eventCard = await this.repoFacade.eventCard.getById(request.cardId);
     if (!eventCard || eventCard.eventId !== request.eventId || eventCard.status === EventCardStatus.INACTIVE)

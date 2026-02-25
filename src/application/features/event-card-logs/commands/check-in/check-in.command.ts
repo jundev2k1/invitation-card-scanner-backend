@@ -1,13 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { MaxLength } from "class-validator";
 
-export class ScanCardRequest {
+export class CheckInCardRequest {
   @ApiProperty({ example: 'Example notes.' })
   @MaxLength(4000, { message: 'Title must be at most 4000 characters' })
   public notes: string
 }
 
-export class ScanCardCommand {
+export class CheckInCardCommand {
   constructor(
     public readonly eventId: string,
     public readonly cardId: string,

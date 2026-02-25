@@ -42,6 +42,15 @@ export class EventCardRepo implements IEventCardRepo {
       : null;
   }
 
+  async getByAccessToken(token: string): Promise<EventCard | null> {
+    const query = sql.unsafe`SELECT * FROM get_event_card_by_access_token(${token})`;
+    const { rows } = await this.dbContext.query(query);
+    
+    return rows.length > 0
+      ? mapToEventCardEntity(rows[0])
+      : null;
+  }
+
   async create(eventCard: EventCard): Promise<void> {
     const query = sql.unsafe`SELECT create_event_card(
       ${eventCard.id},

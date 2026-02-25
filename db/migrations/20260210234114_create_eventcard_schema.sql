@@ -97,7 +97,22 @@ BEGIN
     FROM  event_cards
    WHERE  id = p_id;
 END;
-$$;
+$$
+
+-- Function: get_event_card_by_access_token
+CREATE OR REPLACE FUNCTION get_event_card_by_access_token
+(
+  p_token UUID
+)
+RETURNS SETOF event_cards
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+  SELECT  *
+    FROM  event_cards
+   WHERE  access_token = p_token;
+END;
+$$;;
 
 -- Function: create_event_card
 CREATE OR REPLACE FUNCTION create_event_card
@@ -190,6 +205,8 @@ DROP INDEX IF EXISTS idx_event_cards_token;
 DROP INDEX IF EXISTS idx_event_cards_event;
 
 DROP FUNCTION IF EXISTS get_event_cards_by_event_id;
+DROP FUNCTION IF EXISTS get_event_card_by_id;
+DROP FUNCTION IF EXISTS get_event_card_by_access_token;
 DROP FUNCTION IF EXISTS create_event_card;
 DROP FUNCTION IF EXISTS update_event_card;
 DROP FUNCTION IF EXISTS delete_event_card;
