@@ -1,5 +1,6 @@
 import { PaginatedResult } from "@/src/application/common";
 import { EventCard } from "@/src/domain/entities";
+import { EventCardLogDto } from "../../event-card-logs/dtos";
 import { EventCardDto } from "../dtos";
 import { EventCardtSearchItemDto } from "../dtos/event-card-search-item.dto";
 
@@ -24,7 +25,7 @@ export function mapToSearchResultSummary(
   );
 }
 
-export function mapToDetail(input: EventCard): EventCardDto {
+export function mapToDetail(input: EventCard, logs: EventCardLogDto[]): EventCardDto {
   return new EventCardDto(
     input.id,
     input.eventId,
@@ -35,6 +36,7 @@ export function mapToDetail(input: EventCard): EventCardDto {
     input.status,
     input.notes,
     input.createdAt,
-    input.updatedAt
+    input.updatedAt,
+    logs
   );
 }

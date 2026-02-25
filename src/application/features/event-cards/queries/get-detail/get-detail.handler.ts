@@ -14,9 +14,13 @@ export class GetEventCardDetailHandler implements IQueryHandler<GetEventCardDeta
   ) { }
 
   async execute(request: GetEventCardDetailQuery): Promise<EventCardDto> {
+    // Get event card detail
     const result = await this.repoFacade.eventCard.getById(request.cardId);
     if (!result) throw NotFoundException.create('eventId', request.cardId);
-    
-    return mapToDetail(result);
+
+    // Get event card logs
+    const logs = await this.repoFacade.eventCardLog.search({ cardId: request.cardId }, 1, 100);
+
+    return mapToDetail(result, logs.items);
   }
 }
