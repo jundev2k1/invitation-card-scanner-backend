@@ -50,30 +50,30 @@ BEGIN
           u.avatar_url AS scanned_by_avatar_url,
           ecl.scanned_at,
           ecl.notes,
-          COUNT(*) OVER () AS total_count
+          (COUNT(*) OVER ())::int AS total_count
     FROM  event_card_logs ecl
-    JOIN  users u ON u.id = scanned_by
+    JOIN  users u ON u.id = ecl.scanned_by
    WHERE  (
             p_card_id IS NULL
             OR
-            card_id = p_card_id
+            ecl.card_id = p_card_id
           )
      AND  (
             p_scanned_by IS NULL
             OR
-            scanned_by = p_scanned_by
+            ecl.scanned_by = p_scanned_by
           )
      AND  (
             p_scanned_from IS NULL
             OR
-            p_scanned_from <= scanned_at
+            p_scanned_from <= ecl.scanned_at
           )
      AND  (
             p_scanned_to IS NULL
             OR
-            p_scanned_to >= scanned_at
+            p_scanned_to >= ecl.scanned_at
           )
-  ORDER BY scanned_at DESC
+  ORDER BY ecl.scanned_at DESC
    LIMIT  p_limit
   OFFSET  p_offset;
 END;
