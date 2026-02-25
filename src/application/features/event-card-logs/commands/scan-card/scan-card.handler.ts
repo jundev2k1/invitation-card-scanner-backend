@@ -19,13 +19,13 @@ export class ScanCardHandler implements ICommandHandler<ScanCardCommand> {
 
   async execute(request: ScanCardCommand): Promise<void> {
     // Check if event card exists
-    const eventCard = await this.repoFacade.eventCard.getById(request.eventCardId);
-    if (!eventCard || eventCard.status === EventCardStatus.INACTIVE)
-      throw NotFoundException.create('eventCardId', request.eventCardId);
+    const eventCard = await this.repoFacade.eventCard.getById(request.cardId);
+    if (!eventCard || eventCard.eventId !== request.eventId || eventCard.status === EventCardStatus.INACTIVE)
+      throw NotFoundException.create('cardId', request.cardId);
 
     // Create event card log for event card
     const cardLog = EventCardLog.create({
-      cardId: request.eventCardId,
+      cardId: request.cardId,
       scannedBy: this.userAccessor.userId.toString(),
       notes: request.notes.trim()
     });

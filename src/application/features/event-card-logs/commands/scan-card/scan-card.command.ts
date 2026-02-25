@@ -9,7 +9,8 @@ export class ScanCardRequest {
 
 export class ScanCardCommand {
   constructor(
-    public readonly eventCardId: string,
+    public readonly eventId: string,
+    public readonly cardId: string,
     public readonly notes: string
   ) { }
 }

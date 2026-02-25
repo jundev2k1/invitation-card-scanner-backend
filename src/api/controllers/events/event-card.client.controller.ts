@@ -10,7 +10,7 @@ import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "../../common";
 
 @ApiTags('Event Cards - Client')
-@Controller('api/events/:eventId')
+@Controller('api/events/:eventId/cards')
 @UseGuards(JwtAuthGuard, PermissionGuard)
 @ApiBearerAuth('access-token')
 export class EventCardClientController {
@@ -35,7 +35,7 @@ export class EventCardClientController {
     return ApiResponseFactory.ok(result);
   }
 
-  @Get(':cardId')
+  @Get('/:cardId')
   @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'eventId', type: String, format: 'uuid' })
@@ -46,16 +46,18 @@ export class EventCardClientController {
     return ApiResponseFactory.ok(result);
   }
 
-  @Post()
+  @Post('/:cardId/actions/scan')
   @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'eventId', type: String, format: 'uuid' })
   async scanEventCard(
     @Param('eventId') eventId: string,
+    @Param('cardId') cardId: string,
     @Body() request: ScanCardRequest
   ) {
     const command = new ScanCardCommand(
       eventId,
+      cardId,
       request.notes.trim()
     );
     await this.commandBus.execute(command);
