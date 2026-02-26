@@ -83,7 +83,7 @@ BEGIN
      AND  (
             p_keyword IS NULL OR 
             p_keyword = '' OR 
-            u.search_vector @@ plainto_tsquery('simple', p_keyword)
+            u.search_vector @@ websearch_to_tsquery('simple', p_keyword)
           )
   ORDER BY u.created_at DESC
    LIMIT  p_limit OFFSET p_offset;

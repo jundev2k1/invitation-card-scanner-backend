@@ -83,7 +83,7 @@ BEGIN
      AND  (
             p_keyword = ''
             OR
-            e.search_vector @@ plainto_tsquery('simple', p_keyword)
+            e.search_vector @@ websearch_to_tsquery('simple', p_keyword)
           )
    LIMIT  p_limit OFFSET p_offset;
 END

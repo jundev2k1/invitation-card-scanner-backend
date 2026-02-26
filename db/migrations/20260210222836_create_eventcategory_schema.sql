@@ -54,7 +54,7 @@ BEGIN
       FROM  event_categories AS ec
      WHERE  id <> '' AND id LIKE p_id || '%'
         OR  parent_id <> '' AND parent_id = p_id
-        OR  p_keyword = '' OR ec.search_vector @@ plainto_tsquery('simple', p_keyword)
+        OR  p_keyword = '' OR ec.search_vector @@ websearch_to_tsquery('simple', p_keyword)
   )
   SELECT  *
     FROM  event_categories ec

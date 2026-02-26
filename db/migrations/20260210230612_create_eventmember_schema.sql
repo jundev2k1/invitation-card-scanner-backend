@@ -60,7 +60,7 @@ BEGIN
             OR
             p_keyword = ''
             OR
-            u.search_vector @@ to_tsquery('simple', p_keyword)
+            u.search_vector @@ websearch_to_tsquery('simple', p_keyword)
             OR
             em.assigned_role ILIKE '%' || p_keyword || '%'
             OR

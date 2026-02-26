@@ -78,7 +78,7 @@ BEGIN
             OR
             p_keyword = ''
             OR
-            ec.search_vector @@ to_tsquery('simple', p_keyword)
+            ec.search_vector @@ websearch_to_tsquery('simple', p_keyword)
           )
    LIMIT  p_limit OFFSET p_offset;
 END;
