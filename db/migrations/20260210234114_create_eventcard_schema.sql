@@ -104,13 +104,49 @@ CREATE OR REPLACE FUNCTION get_event_card_by_access_token
 (
   p_token UUID
 )
-RETURNS SETOF event_cards
+RETURNS TABLE (
+  id UUID,
+  event_id UUID,
+  event_title VARCHAR,
+  start_at TIMESTAMPTZ,
+  end_at TIMESTAMPTZ,
+  location_name VARCHAR,
+  "address" VARCHAR,
+  event_status SMALLINT,
+  guest_name VARCHAR,
+  access_token UUID,
+  is_used BOOLEAN,
+  first_scanned_at TIMESTAMP WITH TIME ZONE,
+  card_status SMALLINT,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE,
+  updated_at TIMESTAMP WITH TIME ZONE
+)
 LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
-  SELECT  *
-    FROM  event_cards
-   WHERE  access_token = p_token;
+  SELECT  ec.id,
+          ec.event_id,
+          e.title AS event_title,
+          e.start_at,
+          e.end_at,
+          e.location_name,
+          e.address,
+          e.status AS event_status,
+          ec.guest_name,
+          ec.access_token,
+          ec.is_used,
+          ec.first_scanned_at,
+          ec.status AS card_status,
+          ec.notes,
+          ec.created_at,
+          ec.updated_at
+    FROM  event_cards AS ec
+          LEFT JOIN events AS e ON 
+          (
+            ec.event_id = e.id
+          )
+   WHERE  ec.access_token = p_token;
 END;
 $$;
 

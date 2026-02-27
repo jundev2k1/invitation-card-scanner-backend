@@ -1,12 +1,13 @@
 import { PaginatedResult } from "@/src/application/common";
 import { EventCardDto } from "@/src/application/features/event-cards/dtos";
+import { EventCardDetailDto } from "@/src/application/features/event-cards/dtos/event-card-detail.dto";
 import { POSTGRES_POOL } from "@/src/common/tokens";
 import { EventCard } from "@/src/domain/entities";
 import { IEventCardRepo } from "@/src/domain/interfaces/repositories/event-card.repo";
 import { Inject } from "@nestjs/common";
 import { type DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { transactionStorage } from "../../database";
-import { mapToEventCardEntity, mapToEventCardSearchResult } from "./event-card.mapping";
+import { mapToCardDetail, mapToEventCardEntity, mapToEventCardSearchResult } from "./event-card.mapping";
 
 export class EventCardRepo implements IEventCardRepo {
   private get dbContext(): DatabaseTransactionConnection | DatabasePool {
@@ -42,12 +43,12 @@ export class EventCardRepo implements IEventCardRepo {
       : null;
   }
 
-  async getByAccessToken(token: string): Promise<EventCard | null> {
+  async getByAccessToken(token: string): Promise<EventCardDetailDto | null> {
     const query = sql.unsafe`SELECT * FROM get_event_card_by_access_token(${token})`;
     const { rows } = await this.dbContext.query(query);
     
     return rows.length > 0
-      ? mapToEventCardEntity(rows[0])
+      ? mapToCardDetail(rows[0])
       : null;
   }
 

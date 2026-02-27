@@ -1,5 +1,6 @@
 import { PaginatedResult } from "@/src/application/common";
 import { EventCardDto } from "@/src/application/features/event-cards/dtos";
+import { EventCardDetailDto } from "@/src/application/features/event-cards/dtos/event-card-detail.dto";
 import { EventCard } from "@/src/domain/entities";
 
 export const mapToEventCardSearchResult = (
@@ -36,6 +37,27 @@ export function mapToEventCardEntity(data: any): EventCard {
   return new EventCard(
     data.id,
     data.event_id,
+    data.guest_name,
+    data.access_token,
+    data.is_used,
+    data.first_scanned_at ? new Date(data.first_scanned_at) : null,
+    data.status,
+    data.notes,
+    new Date(data.created_at),
+    new Date(data.updated_at)
+  );
+}
+
+export function mapToCardDetail(data: any): EventCardDetailDto {
+  return new EventCardDetailDto(
+    data.id,
+    data.event_id,
+    data.event_title,
+    new Date(data.start_at),
+    data.end_at ? new Date(data.end_at) : null,
+    data.location_name,
+    data.address,
+    data.event_status,
     data.guest_name,
     data.access_token,
     data.is_used,
