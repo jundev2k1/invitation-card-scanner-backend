@@ -62,7 +62,7 @@ export function mapToCardDetail(data: any): EventCardDetailDto {
     data.access_token,
     data.is_used,
     data.first_scanned_at ? new Date(data.first_scanned_at) : null,
-    data.status,
+    data.card_status,
     data.notes,
     new Date(data.created_at),
     new Date(data.updated_at)
