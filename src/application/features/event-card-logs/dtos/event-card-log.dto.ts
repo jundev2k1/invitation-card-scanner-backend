@@ -6,6 +6,6 @@ export class EventCardLogDto {
     public readonly cardId: string,
     public readonly scannedBy: UserSummaryDto,
     public readonly scannedAt: Date,
-    public readonly note: string | null,
+    public readonly notes: string | null,
   ) { }
 }
