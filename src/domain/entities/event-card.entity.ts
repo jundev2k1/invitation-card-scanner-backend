@@ -48,7 +48,7 @@ export class EventCard {
     this.accessToken = UUIdHelper.createUUIDv7();
   }
 
-  public scan(): void {
+  public scan(firstScannedAt: Date | null = null): void {
     if (this.status !== EventCardStatus.ACTIVE)
       throw new InvalidParameterException("Card is not active.", Constants.ApiMessages.INVALID_STATE);
 
@@ -56,7 +56,7 @@ export class EventCard {
       throw new InvalidParameterException("Card has already been used.", Constants.ApiMessages.INVALID_STATE);
 
     this.isUsed = true;
-    this.firstScannedAt = new Date();
+    this.firstScannedAt = firstScannedAt ?? new Date();
   }
 
   public enable(): void {

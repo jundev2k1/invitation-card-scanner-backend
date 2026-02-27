@@ -29,6 +29,11 @@ export class CheckInCardHandler implements ICommandHandler<CheckInCardCommand> {
     });
     await this.unitOfWork.withTransaction(async () => {
       await this.repoFacade.eventCardLog.create(cardLog);
+      if (eventCard.isUsed) return;
+
+      // Update scan status
+      eventCard.scan(cardLog.scannedAt);
+      await this.repoFacade.eventCard.update(eventCard);
     });
   }
 }
