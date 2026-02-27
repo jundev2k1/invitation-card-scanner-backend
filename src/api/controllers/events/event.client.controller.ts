@@ -2,9 +2,11 @@ import { Permission, PermissionGuard } from "@/src/application/common/https";
 import { CheckInCardCommand, CheckInCardRequest } from "@/src/application/features/event-card-logs/commands/check-in/check-in.command";
 import { GetEventDetailQuery } from "@/src/application/features/events/queries/get-detail/get-detail.query";
 import { SearchEventQuery, SearchEventRequest } from "@/src/application/features/events/queries/search/search.query";
+import { USER_ACCESSOR } from "@/src/common/tokens";
 import { Role } from "@/src/domain/value-objects";
 import { JwtAuthGuard } from "@/src/infrastracture/auth";
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { UserAccessor } from "@/src/infrastracture/security";
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { ApiBearerAuth, ApiParam, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "../../common";
@@ -15,8 +17,9 @@ import { ApiResponseFactory } from "../../common";
 @ApiBearerAuth('access-token')
 export class EventClientController {
   constructor(
+    @Inject(USER_ACCESSOR) private readonly userAccessor: UserAccessor,
     private readonly commandBus: CommandBus,
-    private readonly queryBus: QueryBus,
+    private readonly queryBus: QueryBus
   ) { }
 
   @Get()
@@ -55,7 +58,8 @@ export class EventClientController {
     const command = new CheckInCardCommand(
       eventId,
       cardId,
-      request.notes.trim()
+      request.notes.trim(),
+      this.userAccessor.userId.toString()
     );
     await this.commandBus.execute(command);
     return ApiResponseFactory.created();

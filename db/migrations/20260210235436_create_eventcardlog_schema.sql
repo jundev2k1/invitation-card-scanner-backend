@@ -87,7 +87,7 @@ CREATE OR REPLACE FUNCTION create_event_card_log
   p_notes TEXT,
   p_scanned_at TIMESTAMPTZ
 )
-RETURNS UUID
+RETURNS VOID
 LANGUAGE plpgsql AS $$
 BEGIN
   INSERT INTO event_card_logs

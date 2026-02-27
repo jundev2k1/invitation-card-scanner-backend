@@ -35,17 +35,18 @@ export class EventCardLogRepo implements IEventCardLogRepo {
       ${params.scannedTo?.toISOString() ?? null},
       ${offset},
       ${pageSize})`;
-    const { rows } = await this.pool.query(query);
+    const { rows } = await this.dbContext.query(query);
     return mapToEventCardLogSearchResult(rows, page, pageSize);
   }
 
   async create(eventCardLog: EventCardLog): Promise<void> {
     const query = sql.unsafe`SELECT create_event_card_log(
-      ${eventCardLog.id}
+      ${eventCardLog.id},
       ${eventCardLog.cardId},
       ${eventCardLog.scannedBy},
       ${eventCardLog.notes},
-      ${eventCardLog.scannedAt.toISOString()})`;
+      ${eventCardLog.scannedAt.toISOString()}
+    )`;
     await this.dbContext.query(query);
   }
 
@@ -56,11 +57,11 @@ export class EventCardLogRepo implements IEventCardLogRepo {
     const query = sql.unsafe`SELECT update_event_card_log(
       ${id},
       ${notes})`;
-    await this.pool.query(query);
+    await this.dbContext.query(query);
   }
 
   async delete(id: string): Promise<void> {
     const query = sql.unsafe`SELECT delete_event_card_log(${id})`;
-    await this.pool.query(query);
+    await this.dbContext.query(query);
   }
 }

@@ -11,6 +11,7 @@ export class CheckInCardCommand {
   constructor(
     public readonly eventId: string,
     public readonly cardId: string,
-    public readonly notes: string
+    public readonly notes: string,
+    public readonly userId: string
   ) { }
 }
