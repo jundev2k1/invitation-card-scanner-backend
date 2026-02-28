@@ -13,6 +13,8 @@ export function mapToSearchResultSummary(
         i.guestName,
         i.status,
         i.notes || '',
+        i.isUsed,
+        i.firstScannedAt,
         i.createdAt,
         i.updatedAt
       )

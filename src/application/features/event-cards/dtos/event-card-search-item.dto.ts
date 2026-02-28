@@ -4,6 +4,8 @@ export class EventCardtSearchItemDto {
     public guestName: string,
     public status: number,
     public notes: string,
+    public isUsed: boolean,
+    public firstScannedAt: Date | null,
     public createdAt: Date,
     public updatedAt: Date
   ) { }
