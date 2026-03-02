@@ -42,6 +42,8 @@ export class UserBackofficeController {
     const query = new GetUserListQuery(
       parameters.keyword!,
       statuses,
+      parameters.sortBy || 'createdAt',
+      parameters.sortOrder || 'desc',
       parameters.page!,
       parameters.pageSize!
     );

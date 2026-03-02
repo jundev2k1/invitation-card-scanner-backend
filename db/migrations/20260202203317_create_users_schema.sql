@@ -46,6 +46,8 @@ CREATE OR REPLACE FUNCTION search_users_by_criteria
 (
   p_keyword VARCHAR,
   p_statuses SMALLINT[],
+  p_order_by VARCHAR,
+  p_order_direction VARCHAR,
   p_offset INT,
   p_limit INT
 )
@@ -85,7 +87,13 @@ BEGIN
             p_keyword = '' OR 
             u.search_vector @@ websearch_to_tsquery('simple', p_keyword)
           )
-  ORDER BY u.created_at DESC
+  ORDER BY  CASE WHEN p_order_by = 'nickname' AND p_order_direction = 'desc' THEN u.nickname END DESC,
+            CASE WHEN p_order_by = 'nickname' AND p_order_direction = 'asc' THEN u.nickname END ASC,
+            CASE WHEN p_order_by = 'created_at' AND p_order_direction = 'desc' THEN u.created_at END DESC,
+            CASE WHEN p_order_by = 'created_at' AND p_order_direction = 'asc' THEN u.created_at END ASC,
+            CASE WHEN p_order_by = 'status' AND p_order_direction = 'desc' THEN u.status END DESC,
+            CASE WHEN p_order_by = 'status' AND p_order_direction = 'asc' THEN u.status END ASC,
+            CASE WHEN p_order_by NOT IN ('nickname', 'created_at', 'status') THEN u.created_at END DESC
    LIMIT  p_limit OFFSET p_offset;
 END;
 $$;

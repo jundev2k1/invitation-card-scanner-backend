@@ -5,7 +5,14 @@ import { UserStatus } from "src/domain/enums";
 import { UUID } from "uuidv7";
 
 export interface IUserRepo {
-  search(keyword: string, statuses: UserStatus[], page: number, pageSize: number): Promise<PaginatedResult<UserSearchItem>>;
+  search(
+    keyword: string,
+    statuses: UserStatus[],
+    sortBy: string,
+    sortOrder: string,
+    page: number,
+    pageSize: number
+  ): Promise<PaginatedResult<UserSearchItem>>;
 
   getById(id: UUID): Promise<User | null>;
 

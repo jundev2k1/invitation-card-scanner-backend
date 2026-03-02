@@ -23,11 +23,20 @@ export class UserRepo implements IUserRepo {
     @Inject(POSTGRES_POOL) private readonly pool: DatabasePool
   ) { }
 
-  async search(keyword: string, statuses: UserStatus[], page: number, pageSize: number): Promise<PaginatedResult<UserSearchItem>> {
+  async search(
+    keyword: string,
+    statuses: UserStatus[],
+    sortBy: string,
+    sortOrder: string,
+    page: number,
+    pageSize: number
+  ): Promise<PaginatedResult<UserSearchItem>> {
     const limit = (page - 1) * pageSize;
     const query = sql.unsafe`SELECT * FROM search_users_by_criteria(
       ${QueryHelper.formatToTsQuery(keyword.trim())},
       ${sql.array(statuses, 'int2')},
+      ${sortBy},
+      ${sortOrder},
       ${limit},
       ${pageSize})`;
     const data = await this.dbContext.query(query);

@@ -1,32 +1,28 @@
+import { SearchRequestBase } from "@/src/application/common";
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
 import { IsOptional } from "class-validator";
 import { UserStatus } from "src/domain/enums";
 
-export class GetUserListRequest {
-  @ApiProperty({ example: '', required: false })
-  @IsOptional()
-  public readonly keyword?: string = '';
-
+export class GetUserListRequest extends SearchRequestBase {
   @ApiProperty({ example: `[${UserStatus.ACTIVE}]`, required: false })
   @IsOptional()
   public readonly statuses?: UserStatus[] = [];
 
-  @ApiProperty({ example: 1, required: false })
+  @ApiProperty({ example: 'createdAt', required: false })
   @IsOptional()
-  @Type(() => Number)
-  public readonly page?: number = 1;
+  public readonly sortBy?: string;
 
-  @ApiProperty({ example: 20, required: false })
+  @ApiProperty({ example: 'desc', required: false })
   @IsOptional()
-  @Type(() => Number)
-  public readonly pageSize?: number = 20;
+  public readonly sortOrder?: 'asc' | 'desc' = 'desc';
 }
 
 export class GetUserListQuery {
   constructor(
     public readonly keyword: string,
     public readonly statuses: UserStatus[],
+    public readonly sortBy: string,
+    public readonly sortOrder: string,
     public readonly page: number,
     public readonly pageSize: number
   ) { }
