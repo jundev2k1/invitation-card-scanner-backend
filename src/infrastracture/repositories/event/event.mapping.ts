@@ -2,7 +2,7 @@ import { EventDetailDto } from "@/src/application/features/events/dtos/event-det
 import { Event } from "@/src/domain/entities";
 import { CategoryId } from "@/src/domain/value-objects";
 import { PaginatedResult } from "src/application/common";
-import { EventSearchItem } from "src/application/features/events/dtos";
+import { EventDetailStatsDto, EventSearchItem } from "src/application/features/events/dtos";
 
 export const mapToEventSearchResult = (
   data: readonly any[],
@@ -54,7 +54,7 @@ export const mapToDetail = (data: any): EventDetailDto => {
     new Date(data.created_at),
     new Date(data.updated_at),
   )
-} 
+}
 
 export const mapToEventEntity = (data: any): Event => {
   return new Event(
@@ -71,5 +71,19 @@ export const mapToEventEntity = (data: any): Event => {
     data.status,
     new Date(data.created_at),
     new Date(data.updated_at)
+  );
+}
+
+export const mapToEventDetailStats = (data: any): EventDetailStatsDto => {
+  return new EventDetailStatsDto(
+    data.id,
+    {
+      totalCards: data.total_card_count,
+      availableCards: data.available_card_count,
+      usedCards: data.used_card_count
+    },
+    {
+      totalMembers: data.total_member_count,
+    }
   );
 }

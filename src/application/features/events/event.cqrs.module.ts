@@ -6,10 +6,12 @@ import { DeleteEventHandler } from "./commands/delete-event/delete-event.handler
 import { UpdateEventStatusHandler } from "./commands/update-event-status/update-event-status.handler";
 import { UpdateEventHandler } from "./commands/update-event/update-event.handler";
 import { GetEventDetailHandler } from "./queries/get-detail/get-detail.handler";
+import { GetEventDetailStatsHandler } from "./queries/get-event-detail-statistic/get-event-detail-statistic.handler";
 import { SearchEventHandler } from "./queries/search/search.handler";
 
 const queries = [
   SearchEventHandler,
+  GetEventDetailStatsHandler,
   GetEventDetailHandler,
 ];
 

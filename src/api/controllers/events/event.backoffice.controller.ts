@@ -5,6 +5,7 @@ import { DeleteEventCommand } from "@/src/application/features/events/commands/d
 import { UpdateEventStatusCommand } from "@/src/application/features/events/commands/update-event-status/update-event-status.command";
 import { UpdateEventCommand, UpdateEventRequest } from "@/src/application/features/events/commands/update-event/update-event.command";
 import { GetEventDetailQuery } from "@/src/application/features/events/queries/get-detail/get-detail.query";
+import { GetEventDetailStatsQuery } from "@/src/application/features/events/queries/get-event-detail-statistic/get-event-detail-statistic.query";
 import { SearchEventQuery, SearchEventRequest } from "@/src/application/features/events/queries/search/search.query";
 import { EventStatus } from "@/src/domain/enums";
 import { CategoryId, Role } from "@/src/domain/value-objects";
@@ -23,6 +24,18 @@ export class EventBackofficeController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) { }
+
+  @Get(':id/stats')
+  @Permission(Role.admin, Role.staff)
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'id', type: String, format: 'uuid' })
+  async getEventStatisticByIds(
+    @Param('id') id: string
+  ) {
+    const query = new GetEventDetailStatsQuery(id);
+    const result = await this.queryBus.execute(query);
+    return ApiResponseFactory.ok(result);
+  }
 
   @Get()
   @Permission(Role.admin, Role.staff)

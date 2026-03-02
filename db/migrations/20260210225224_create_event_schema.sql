@@ -134,6 +134,43 @@ BEGIN
 END
 $$;
 
+CREATE OR REPLACE FUNCTION get_event_stats_by_id
+(
+  p_id UUID
+)
+RETURNS TABLE
+(
+  event_id UUID,
+  total_card_count BIGINT,
+  available_card_count BIGINT,
+  used_card_count BIGINT,
+  total_member_count BIGINT
+)
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+  WITH card_stats AS (
+    SELECT  COUNT(*) AS total_card_count,
+            COUNT(*) FILTER (WHERE c.status = 1) AS available_card_count,
+            COUNT(*) FILTER (WHERE c.is_used = true) AS used_card_count
+      FROM  event_cards c
+     WHERE  c.event_id = p_id
+  ),
+  member_stats AS (
+    SELECT  COUNT(*) AS total_member_count
+      FROM  event_members m
+     WHERE  m.event_id = p_id
+  )
+  SELECT  p_id AS event_id,
+          ec.total_card_count,
+  		    ec.available_card_count,
+  		    ec.used_card_count,
+  		    m.total_member_count
+    FROM  card_stats ec
+          CROSS JOIN member_stats m;
+END
+$$
+
 CREATE OR REPLACE FUNCTION get_event_by_id
 (
   p_id UUID
@@ -279,6 +316,7 @@ DROP TRIGGER IF EXISTS trg_events_search_update;
 
 DROP FUNCTION IF EXISTS search_events_by_keyword;
 DROP FUNCTION IF EXISTS search_events_by_category;
+DROP FUNCTION IF EXISTS get_event_stats_by_id;
 DROP FUNCTION IF EXISTS get_event_by_id;
 DROP FUNCTION IF EXISTS create_event;
 DROP FUNCTION IF EXISTS update_event;
