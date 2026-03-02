@@ -45,7 +45,7 @@ FOR EACH ROW EXECUTE FUNCTION events_search_vector_trigger();
 CREATE OR REPLACE FUNCTION search_events_by_criteria
 (
   p_keyword VARCHAR,
-  p_category_id VARCHAR,
+  p_category_ids VARCHAR[],
   p_statuses SMALLINT[],
   p_start_from TIMESTAMP,
   p_start_to TIMESTAMP,
@@ -96,9 +96,9 @@ BEGIN
             e.search_vector @@ websearch_to_tsquery('simple', p_keyword)
           )
      AND  (
-            p_category_id = ''
+            cardinality(p_category_ids) = 0
             OR
-            e.category_id = p_category_id
+            e.category_id = ANY(p_category_ids)
           )
      AND  (
             cardinality(p_statuses) = 0

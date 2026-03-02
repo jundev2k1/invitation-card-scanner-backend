@@ -36,7 +36,7 @@ export class EventRepo implements IEventRepo {
 
     const query = sql.unsafe`SELECT * FROM search_events_by_criteria(
       ${keyword},
-      ${sql.array(categories.map(c => c.value), 'string')},
+      ${sql.array(categories.map(c => c.value), 'varchar')},
       ${sql.array(statuses, 'int2')},
       ${startFrom?.toISOString() ?? null},
       ${startEnd?.toISOString() ?? null},
