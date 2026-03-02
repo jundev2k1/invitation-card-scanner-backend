@@ -1,10 +1,11 @@
+import { EventCategorySummaryDto } from "@/src/application/features/event-categories/dtos/event-category-summary.dto";
 import { Inject, Injectable } from "@nestjs/common";
 import { type DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { POSTGRES_POOL } from "src/common/tokens";
 import { EventCategory } from "src/domain/entities";
 import { IEventCategoryRepo } from "src/domain/interfaces/repositories/event-category.repo";
 import { transactionStorage } from "src/infrastracture/database";
-import { mapToEventCategoryEntity } from "./event-category.mapping";
+import { mapToEventCategoryEntity, mapToEventCategorySummaries } from "./event-category.mapping";
 
 @Injectable()
 export class EventCategoryRepo implements IEventCategoryRepo {
@@ -35,6 +36,18 @@ export class EventCategoryRepo implements IEventCategoryRepo {
 
     const data = await this.dbContext.query(query);
     return data.rows.map(row => mapToEventCategoryEntity(row)!);
+  }
+
+  async getSuggestions(keyword: string, pageSize: number): Promise<EventCategorySummaryDto[]> {
+    const query = sql.unsafe`
+      SELECT * FROM get_event_category_suggestions(
+        ${keyword},
+        ${pageSize}
+      );
+    `;
+
+    const { rows } = await this.dbContext.query(query);
+    return mapToEventCategorySummaries(rows);
   }
 
   async getById(id: string): Promise<EventCategory | null> {

@@ -1,9 +1,12 @@
+import { EventCategorySummaryDto } from "@/src/application/features/event-categories/dtos/event-category-summary.dto";
 import { EventCategory } from "src/domain/entities";
 
 export interface IEventCategoryRepo {
   search(parentId: string, cateId: string, keyword: string): Promise<EventCategory[]>;
 
   getAllActive(): Promise<EventCategory[]>;
+
+  getSuggestions(keyword: string, pageSize: number): Promise<EventCategorySummaryDto[]>;
 
   getById(id: string): Promise<EventCategory | null>;
 

@@ -1,3 +1,4 @@
+import { EventCategorySummaryDto } from "@/src/application/features/event-categories/dtos/event-category-summary.dto";
 import { EventCategory } from "src/domain/entities";
 import { EventCategoryStatus } from "src/domain/enums";
 import { CategoryId } from "src/domain/value-objects";
@@ -19,3 +20,17 @@ export const mapToEventCategoryEntity = (data: any): EventCategory | null => {
     new Date(data.updated_at)
   );
 };
+
+export const mapToEventCategorySummary = (data: any): EventCategorySummaryDto => {
+  return new EventCategorySummaryDto(
+    data.parent_id,
+    data.id,
+    data.name,
+    data.slug,
+    data.image_url
+  );
+}
+
+export const mapToEventCategorySummaries = (data: readonly any[]): EventCategorySummaryDto[] => {
+  return data.map(mapToEventCategorySummary);
+}

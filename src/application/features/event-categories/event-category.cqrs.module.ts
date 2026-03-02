@@ -4,10 +4,12 @@ import { Module } from "@nestjs/common";
 import { CreateCategoryHandler } from "./commands/create-category/create-category.handler";
 import { DeleteCategoryHandler } from "./commands/delete-category/delete-category.handler";
 import { UpdateCategoryHandler } from "./commands/update-category/update-category.handler";
+import { GetEventCategorySuggestionsHandler } from "./queries/get-category-suggestions/get-category-suggestions.handler";
 import { SearchCategoriesHandler } from "./queries/search/search.handler";
 
 const queries = [
   SearchCategoriesHandler,
+  GetEventCategorySuggestionsHandler,
 ];
 
 const commands = [

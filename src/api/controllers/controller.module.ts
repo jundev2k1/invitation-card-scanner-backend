@@ -6,6 +6,7 @@ import { AuthController } from "./auth.controller";
 import { EventCardBackofficeController } from "./events/event-card.backoffice.controller";
 import { EventCardClientController } from "./events/event-card.client.controller";
 import { EventCategoryBackofficeController } from "./events/event-category.backoffice.controller";
+import { EventCategoryClientController } from "./events/event-category.client.controller";
 import { EventBackofficeController } from "./events/event.backoffice.controller";
 import { EventClientController } from "./events/event.client.controller";
 import { ScanClientController } from "./scans/scan.client.controller";
@@ -28,6 +29,7 @@ const controllers = [
 
   // EventCategory Controllers
   EventCategoryBackofficeController,
+  EventCategoryClientController,
 
   // Event Controllers
   EventClientController,

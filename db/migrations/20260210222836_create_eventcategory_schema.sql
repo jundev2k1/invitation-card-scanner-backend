@@ -28,7 +28,8 @@ RETURNS trigger AS $$
 BEGIN
   NEW.search_vector :=
     setweight(to_tsvector('simple', coalesce(NEW.name, '')), 'A') ||
-    setweight(to_tsvector('simple', coalesce(NEW.description, '')), 'B');
+    setweight(to_tsvector('simple', coalesce(NEW.slug, '')), 'B') ||
+    setweight(to_tsvector('simple', coalesce(NEW.description, '')), 'C');
   RETURN NEW;
 END
 $$ LANGUAGE plpgsql;
@@ -85,6 +86,37 @@ BEGIN
               AND (LENGTH(c.id) - LENGTH(parent.id)) % 3 = 0
               AND c.id LIKE parent.id || '%'
           );
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_event_category_suggestions
+(
+  p_keyword VARCHAR,
+  p_limit INT
+)
+RETURNS TABLE (
+  id VARCHAR,
+  parent_id VARCHAR,
+  "name" VARCHAR,
+  slug VARCHAR,
+  image_url VARCHAR
+)
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+  SELECT  ec.id,
+          ec.parent_id,
+          ec.name,
+          ec.slug,
+          ec.image_url
+    FROM  event_categories ec
+   WHERE  (
+            p_keyword = ''
+            OR
+            ec.search_vector @@ websearch_to_tsquery('simple', p_keyword)
+          )
+     AND  ec.status = 1
+   LIMIT  p_limit;
 END;
 $$;
 
@@ -228,6 +260,7 @@ DROP INDEX IF EXISTS idx_event_categories_search_vector;
 
 DROP FUNCTION IF EXISTS search_event_categories;
 DROP FUNCTION IF EXISTS get_all_active_event_categories;
+DROP FUNCTION IF EXISTS get_event_category_suggestions;
 DROP FUNCTION IF EXISTS get_event_category_by_id;
 DROP FUNCTION IF EXISTS create_event_category;
 DROP FUNCTION IF EXISTS update_event_category;
