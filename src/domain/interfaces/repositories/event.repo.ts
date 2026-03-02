@@ -1,4 +1,4 @@
-import { EventDetailStatsDto, EventSearchItem } from "@/src/application/features/events/dtos";
+import { EventDetailDto, EventDetailStatsDto, EventSearchItem } from "@/src/application/features/events/dtos";
 import { PaginatedResult } from "src/application/common";
 import { Event } from "src/domain/entities";
 import { EventStatus } from "../../enums";
@@ -26,6 +26,8 @@ export interface IEventRepo {
   ): Promise<PaginatedResult<EventSearchItem>>;
 
   getStatsById(id: string): Promise<EventDetailStatsDto>;
+
+  getDetailById(id: string): Promise<EventDetailDto | null>
 
   getById(id: string): Promise<Event | null>;
 

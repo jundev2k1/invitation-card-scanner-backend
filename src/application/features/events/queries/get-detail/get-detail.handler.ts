@@ -13,24 +13,9 @@ export class GetEventDetailHandler implements IQueryHandler<GetEventDetailQuery,
   ) { }
 
   async execute(request: GetEventDetailQuery): Promise<EventDetailDto> {
-    const event = await this.repoFacade.event.getById(request.eventId);
+    const event = await this.repoFacade.event.getDetailById(request.eventId);
     if (!event) throw NotFoundException.create('eventId', request.eventId);
 
-    return new EventDetailDto(
-      event.id,
-      event.categoryId?.value || null,
-      event.title,
-      event.description,
-      event.startAt,
-      event.endAt,
-      event.locationName,
-      event.address,
-      event.mapUrl,
-      event.thumbnailUrl,
-      event.status,
-      "{}",
-      event.createdAt,
-      event.updatedAt
-    );
+    return event;
   }
 }

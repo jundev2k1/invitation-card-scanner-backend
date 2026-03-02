@@ -40,7 +40,9 @@ export const mapToEventSearchResult = (
 export const mapToDetail = (data: any): EventDetailDto => {
   return new EventDetailDto(
     data.id,
-    data.category_id,
+    data.category_id || null,
+    data.category_name || null,
+    data.category_slug || null,
     data.title,
     data.description,
     new Date(data.start_at),

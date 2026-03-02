@@ -222,14 +222,48 @@ CREATE OR REPLACE FUNCTION get_event_by_id
 (
   p_id UUID
 )
-RETURNS SETOF events
+RETURNS TABLE
+(
+  id UUID,
+  category_id VARCHAR,
+  category_name VARCHAR,
+  category_slug VARCHAR,
+  title VARCHAR,
+  "description" TEXT,
+  start_at TIMESTAMP,
+  end_at TIMESTAMP,
+  location_name VARCHAR,
+  "address" VARCHAR,
+  map_url VARCHAR,
+  thumbnail_url VARCHAR,
+  settings JSONB,
+  "status" SMALLINT,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP
+)
 LANGUAGE plpgsql AS $$
 BEGIN
   RETURN QUERY
-  SELECT  *
-    FROM  events
-   WHERE  id = p_id
-     AND  "status" <> 0;
+  SELECT  e.id,
+          e.category_id,
+          ec.name AS category_name,
+          ec.slug AS category_slug,
+          e.title,
+          e.description,
+          e.start_at,
+          e.end_at,
+          e.location_name,
+          e.address,
+          e.map_url,
+          e.thumbnail_url,
+          e.settings,
+          e.status,
+          e.created_at,
+          e.updated_at
+    FROM  events e
+          LEFT JOIN event_categories ec ON e.category_id = ec.id
+   WHERE  e.id = p_id
+     AND  e.status <> 0;
 END;
 $$;
 

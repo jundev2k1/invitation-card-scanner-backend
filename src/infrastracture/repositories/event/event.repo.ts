@@ -1,5 +1,5 @@
 import { PaginatedResult } from '@/src/application/common';
-import { EventDetailStatsDto, EventSearchItem } from '@/src/application/features/events/dtos';
+import { EventDetailDto, EventDetailStatsDto, EventSearchItem } from '@/src/application/features/events/dtos';
 import { POSTGRES_POOL } from '@/src/common/tokens';
 import { Event } from '@/src/domain/entities';
 import { EventStatus } from '@/src/domain/enums';
@@ -8,7 +8,7 @@ import { CategoryId } from '@/src/domain/value-objects';
 import { Inject } from '@nestjs/common';
 import { type DatabasePool, DatabaseTransactionConnection, sql } from 'slonik';
 import { transactionStorage } from '../../database';
-import { mapToEventDetailStats, mapToEventEntity, mapToEventSearchResult } from './event.mapping';
+import { mapToDetail, mapToEventDetailStats, mapToEventEntity, mapToEventSearchResult } from './event.mapping';
 
 export class EventRepo implements IEventRepo {
   private get dbContext(): DatabaseTransactionConnection | DatabasePool {
@@ -68,6 +68,15 @@ export class EventRepo implements IEventRepo {
     const { rows } = await this.dbContext.query(query);
 
     return mapToEventDetailStats(rows[0]);
+  }
+
+  async getDetailById(id: string): Promise<EventDetailDto | null> {
+    const query = sql.unsafe`SELECT * FROM get_event_by_id(${id})`;
+    const { rows } = await this.dbContext.query(query);
+
+    return rows.length > 0
+      ? mapToDetail(rows[0])
+      : null;
   }
 
   async getById(id: string): Promise<Event | null> {
