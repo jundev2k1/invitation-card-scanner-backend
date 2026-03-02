@@ -128,7 +128,7 @@ BEGIN
           u.avatar_url
     FROM  users u
    WHERE  u.role <> 'ROOT'
-     AND  u.status = 1
+     AND  u.status = 2
      AND  (
             cardinality(p_roles) = 0
             OR
