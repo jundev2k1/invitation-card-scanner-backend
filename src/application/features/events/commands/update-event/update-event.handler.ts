@@ -1,4 +1,5 @@
 import { REPO_FACADE, UNIT_OF_WORK } from "@/src/common/tokens";
+import { EventStatus } from "@/src/domain/enums";
 import { NotFoundException } from "@/src/domain/exceptions";
 import { UnitOfWork } from "@/src/infrastracture/database";
 import { RepositoryFacade } from "@/src/infrastracture/repositories";
@@ -30,6 +31,11 @@ export class UpdateEventHandler implements ICommandHandler<UpdateEventCommand> {
         request.mapUrl
       );
       targetEvent.reschedule(request.startAt, request.endAt);
+      switch (request.status) {
+        case EventStatus.PUBLISHED: targetEvent.publish(); break;
+        case EventStatus.COMPLETED: targetEvent.complete(); break;
+        case EventStatus.CANCELLED: targetEvent.cancel(); break;
+      }
       targetEvent.updateUpdatedAt();
       await this.repoFacade.event.update(targetEvent);
     });

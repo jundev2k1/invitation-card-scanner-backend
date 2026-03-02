@@ -1,8 +1,9 @@
 import { Must } from "@/src/application/common/validators";
+import { EventStatus } from "@/src/domain/enums";
 import { CategoryId } from "@/src/domain/value-objects";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsDate, IsNotEmpty, IsOptional, MaxLength } from "class-validator";
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, MaxLength } from "class-validator";
 
 export class UpdateEventRequest {
   @ApiProperty({ example: 'ROOT' })
@@ -17,6 +18,11 @@ export class UpdateEventRequest {
   @ApiProperty({ example: 'Example description.' })
   @MaxLength(4000, { message: 'Description must be at most 4000 characters' })
   public description: string = '';
+
+  @ApiProperty({ example: '1' })
+  @IsEnum(EventStatus, { message: 'Status is invalid' })
+  @IsOptional()
+  public status: EventStatus;
 
   @ApiProperty({ example: '2022-01-01T00:00:00.000Z' })
   @IsDate()
@@ -52,6 +58,7 @@ export class UpdateEventCommand {
     public readonly categoryId: CategoryId | null,
     public readonly title: string,
     public readonly description: string,
+    public readonly status: EventStatus,
     public readonly startAt: Date,
     public readonly endAt: Date | null,
     public readonly locationName: string,
