@@ -101,6 +101,7 @@ export class EventBackofficeController {
       request.categoryId ? CategoryId.of(request.categoryId) : null,
       request.title?.trim() || '',
       request.description?.trim() || '',
+      request.status,
       request.startAt,
       request.endAt,
       request.locationName?.trim() || '',
