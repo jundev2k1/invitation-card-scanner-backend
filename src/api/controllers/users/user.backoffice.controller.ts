@@ -24,7 +24,7 @@ export class UserBackofficeController {
   ) { }
 
   @Get("status/stats")
-  @Permission(Role.admin)
+  @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   async getUserStatusCount() {
     const query = new GetUserStatusCountQuery();
@@ -33,7 +33,7 @@ export class UserBackofficeController {
   }
 
   @Get()
-  @Permission(Role.admin)
+  @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   async getUserList(@Query() parameters: GetUserListRequest) {
     const statuses: UserStatus[] = Array.isArray(parameters.statuses!)
@@ -50,7 +50,7 @@ export class UserBackofficeController {
   }
 
   @Get(':id')
-  @Permission(Role.admin)
+  @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
   async getUserDetail(@Param('id') userId: UUID) {
