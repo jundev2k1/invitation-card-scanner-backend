@@ -1,5 +1,15 @@
 import { Inject } from "@nestjs/common";
-import { EVENT_CARD_LOG_REPO, EVENT_CARD_REPO, EVENT_CATEGORY_REPO, EVENT_MEMBER_REPO, EVENT_REPO, REFRESH_TOKEN_REPO, USER_REPO } from "src/common/tokens";
+import {
+  ANALYSIS_REPO,
+  EVENT_CARD_LOG_REPO,
+  EVENT_CARD_REPO,
+  EVENT_CATEGORY_REPO,
+  EVENT_MEMBER_REPO,
+  EVENT_REPO,
+  REFRESH_TOKEN_REPO,
+  USER_REPO,
+} from "src/common/tokens";
+import { AnalysisRepo } from "./analysis/analysis.repo";
 import { EventCardLogRepo } from "./event-card-log/event-card-log.repo";
 import { EventCardRepo } from "./event-card/event-card.repo";
 import { EventCategoryRepo } from "./event-category/event-category.repo";
@@ -10,6 +20,7 @@ import { UserRepo } from "./user/user.repo";
 
 export class RepositoryFacade {
   constructor(
+    @Inject(ANALYSIS_REPO) private readonly analysisRepo: AnalysisRepo,
     @Inject(USER_REPO) private readonly userRepo: UserRepo,
     @Inject(REFRESH_TOKEN_REPO) private readonly refreshTokenRepo: RefreshTokenRepo,
     @Inject(EVENT_CATEGORY_REPO) private readonly eventCategoryRepo: EventCategoryRepo,
@@ -19,6 +30,7 @@ export class RepositoryFacade {
     @Inject(EVENT_CARD_LOG_REPO) private readonly eventCardLogRepo: EventCardLogRepo
   ) { }
 
+  get analysis() { return this.analysisRepo; }
   get user() { return this.userRepo; }
   get refreshToken() { return this.refreshTokenRepo; }
   get eventCategory() { return this.eventCategoryRepo; }

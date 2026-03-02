@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { CqrsModule } from "@nestjs/cqrs";
 import { SecurityModule } from "src/infrastracture/security/security.module";
+import { AnalysisController } from "./analysis.controller";
 import { AuthController } from "./auth.controller";
 import { EventCardBackofficeController } from "./events/event-card.backoffice.controller";
 import { EventCardClientController } from "./events/event-card.client.controller";
@@ -14,6 +15,9 @@ import { UserClientController } from "./users/user.client.controller";
 const controllers = [
   // Auth Controllers
   AuthController,
+
+  // Analysis Controllers
+  AnalysisController,
 
   // Scan Controllers
   ScanClientController,
