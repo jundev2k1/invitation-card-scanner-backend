@@ -14,22 +14,22 @@ export class SearchEventRequest extends SearchRequestBase {
   @IsOptional()
   public readonly categories?: string[] = [];
 
-  @ApiProperty({ example: new Date().toISOString(), required: false })
+  @ApiProperty({ example: new Date().toISOString(), required: false, type: Date })
   @IsOptional()
   @Type(() => Date)
   public readonly startFrom?: Date | null;
 
-  @ApiProperty({ example: '', required: false })
+  @ApiProperty({ example: '', required: false, type: Date })
   @IsOptional()
   @Type(() => Date)
   public readonly startTo?: Date | null;
 
-  @ApiProperty({ example: '', required: false })
+  @ApiProperty({ example: '', required: false, type: Date })
   @IsOptional()
   @Type(() => Date)
   public readonly endFrom?: Date | null;
 
-  @ApiProperty({ example: '', required: false })
+  @ApiProperty({ example: '', required: false, type: Date })
   @IsOptional()
   @Type(() => Date)
   public readonly endTo?: Date | null;

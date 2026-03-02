@@ -21,6 +21,7 @@ export class AnalysisController {
   @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   async getGeneralStatistics(@Query() parameters: GetGeneralStatisticsRequest) {
+    console.log(parameters);
     const query = new GetGeneralStatisticsQuery(
       parameters.startDate || DateTimeHelper.minDate(),
       parameters.endDate || DateTimeHelper.maxDate()
