@@ -1,5 +1,5 @@
 import { PaginatedResult } from "src/application/common";
-import { UserSearchItem } from "src/application/features/users/dtos";
+import { UserSearchItem, UserSummaryDto } from "src/application/features/users/dtos";
 import { User } from "src/domain/entities";
 import { UserStatus } from "src/domain/enums";
 import { Email, PhoneNumber, Role, Sex, UserName } from "src/domain/value-objects";
@@ -43,5 +43,17 @@ export const mapToSearchResult = (data: readonly any[], page: number, pageSize: 
     Math.ceil(totalCount / pageSize),
     page,
     pageSize
+  );
+}
+
+export const mapToUserSummaries = (data: readonly any[]): UserSummaryDto[] => {
+  return data.map(i =>
+    new UserSummaryDto(
+      i.id,
+      i.nickname,
+      i.email,
+      i.phone_number,
+      i.avatar_url
+    )
   );
 }

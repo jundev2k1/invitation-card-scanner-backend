@@ -1,4 +1,5 @@
-import { Controller, Get, HttpCode, HttpStatus, Inject, UseGuards } from "@nestjs/common";
+import { GetUserSuggestionQuery, GetUserSuggestionRequest } from "@/src/application/features/users/queries/get-user-suggestion/get-user-suggestion.query";
+import { Controller, Get, HttpCode, HttpStatus, Inject, Query, UseGuards } from "@nestjs/common";
 import { QueryBus } from "@nestjs/cqrs";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { ApiResponseFactory } from "src/api/common";
@@ -18,6 +19,19 @@ export class UserClientController {
     @Inject(USER_ACCESSOR) private readonly userAccessor: UserAccessor,
     private readonly queryBus: QueryBus,
   ) { }
+
+  @Get('suggestions')
+  @Permission(Role.admin, Role.staff)
+  @HttpCode(HttpStatus.OK)
+  async getSuggestions(@Query() parameters: GetUserSuggestionRequest) {
+    const query = new GetUserSuggestionQuery(
+      parameters.keyword.trim() || '',
+      parameters.roles ? parameters.roles.filter(r => Role.isValid(r)).map(r => Role[r]) : [],
+      parameters.pageSize || 5
+    );
+    const result = await this.queryBus.execute(query);
+    return ApiResponseFactory.ok(result);
+  }
 
   @Get('me')
   @Permission(Role.admin, Role.staff)

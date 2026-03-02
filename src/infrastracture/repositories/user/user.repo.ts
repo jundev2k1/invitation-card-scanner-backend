@@ -1,15 +1,16 @@
+import { Role } from "@/src/domain/value-objects";
 import { Inject, Injectable } from "@nestjs/common";
 import type { DatabasePool, DatabaseTransactionConnection } from 'slonik';
 import { sql } from 'slonik';
 import { PaginatedResult } from "src/application/common";
-import { UserSearchItem } from "src/application/features/users/dtos";
+import { UserSearchItem, UserSummaryDto } from "src/application/features/users/dtos";
 import { POSTGRES_POOL } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { UserStatus } from "src/domain/enums";
 import { IUserRepo } from "src/domain/interfaces/repositories/user.repo";
 import { transactionStorage } from "src/infrastracture/database/unit-of-work/transaction-storage";
 import { UUID } from "uuidv7";
-import { mapToSearchResult, mapToUserEntity } from "./user.mapping";
+import { mapToSearchResult, mapToUserEntity, mapToUserSummaries } from "./user.mapping";
 
 @Injectable()
 export class UserRepo implements IUserRepo {
@@ -40,6 +41,16 @@ export class UserRepo implements IUserRepo {
       ${pageSize})`;
     const data = await this.dbContext.query(query);
     return mapToSearchResult(data.rows, page, pageSize);
+  }
+
+  async getUserSuggestions(keyword: string, roles: Role[], pageSize: number): Promise<UserSummaryDto[]> {
+    const query = sql.unsafe`SELECT * FROM search_users_suggestions(
+      ${keyword},
+      ${sql.array(roles.map(r => r.value), 'varchar')},
+      ${pageSize}
+    );`;
+    const { rows } = await this.dbContext.query(query);
+    return mapToUserSummaries(rows);
   }
 
   async getUserStatusCount(): Promise<[UserStatus, number][]> {

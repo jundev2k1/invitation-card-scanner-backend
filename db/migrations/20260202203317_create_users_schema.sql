@@ -81,10 +81,16 @@ BEGIN
           (COUNT(*) OVER())::int AS total_count
     FROM  users u
    WHERE  u.role <> 'ROOT'
-     AND  (cardinality(p_statuses) = 0 OR u.status = ANY(p_statuses))
      AND  (
-            p_keyword IS NULL OR 
-            p_keyword = '' OR 
+            cardinality(p_statuses) = 0
+            OR
+            u.status = ANY(p_statuses)
+          )
+     AND  (
+            p_keyword IS NULL
+            OR
+            p_keyword = ''
+            OR 
             u.search_vector @@ websearch_to_tsquery('simple', p_keyword)
           )
   ORDER BY  CASE WHEN p_order_by = 'nickname' AND p_order_direction = 'desc' THEN u.nickname END DESC,
@@ -95,6 +101,47 @@ BEGIN
             CASE WHEN p_order_by = 'status' AND p_order_direction = 'asc' THEN u.status END ASC,
             CASE WHEN p_order_by NOT IN ('nickname', 'created_at', 'status') THEN u.created_at END DESC
    LIMIT  p_limit OFFSET p_offset;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION search_users_suggestions
+(
+  p_keyword VARCHAR,
+  p_roles VARCHAR[],
+  p_limit INT
+)
+RETURNS TABLE
+(
+  id UUID,
+  email VARCHAR,
+  nickname VARCHAR,
+  phone_number VARCHAR,
+  avatar_url VARCHAR
+) 
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+  SELECT  u.id,
+          u.email,
+          u.nickname,
+          u.phone_number,
+          u.avatar_url
+    FROM  users u
+   WHERE  u.role <> 'ROOT'
+     AND  u.status = 1
+     AND  (
+            cardinality(p_roles) = 0
+            OR
+            u.role = ANY(p_roles)
+          )
+     AND  (
+            p_keyword IS NULL
+            OR
+            p_keyword = ''
+            OR 
+            u.search_vector @@ websearch_to_tsquery('simple', p_keyword)
+          )
+   LIMIT  p_limit;
 END;
 $$;
 
@@ -275,6 +322,8 @@ DROP FUNCTION IF EXISTS get_user_by_id;
 DROP FUNCTION IF EXISTS get_user_by_username;
 DROP FUNCTION IF EXISTS get_user_by_email;
 DROP FUNCTION IF EXISTS search_users_by_criteria;
+DROP FUNCTION IF EXISTS search_users_suggestions;
+DROP FUNCTION IF EXISTS get_user_status_count;
 DROP FUNCTION IF EXISTS check_user_exists_by_username;
 DROP FUNCTION IF EXISTS check_user_exists_by_email;
 

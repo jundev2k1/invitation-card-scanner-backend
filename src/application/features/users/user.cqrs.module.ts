@@ -6,11 +6,13 @@ import { UpdateUserHandler } from "./commands/update-user/update-user.handler";
 import { GetUserDetailHandler } from "./queries/get-user-detail/get-user-detail.handler";
 import { GetUserListHandler } from "./queries/get-user-list/get-user-list.handler";
 import { GetUserStatusCountHandler } from "./queries/get-user-status-count/get-status-count.handler";
+import { GetUserSuggestionHandler } from "./queries/get-user-suggestion/get-user-suggestion.handler";
 
 const queries = [
   GetUserListHandler,
   GetUserDetailHandler,
   GetUserStatusCountHandler,
+  GetUserSuggestionHandler,
 ];
 const commands = [
   ApproveUserHandler,
