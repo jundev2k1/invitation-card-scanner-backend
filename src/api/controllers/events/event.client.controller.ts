@@ -3,7 +3,7 @@ import { CheckInCardCommand, CheckInCardRequest } from "@/src/application/featur
 import { GetEventDetailQuery } from "@/src/application/features/events/queries/get-detail/get-detail.query";
 import { SearchEventQuery, SearchEventRequest } from "@/src/application/features/events/queries/search/search.query";
 import { USER_ACCESSOR } from "@/src/common/tokens";
-import { Role } from "@/src/domain/value-objects";
+import { CategoryId, Role } from "@/src/domain/value-objects";
 import { JwtAuthGuard } from "@/src/infrastracture/auth";
 import { UserAccessor } from "@/src/infrastracture/security";
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, Post, Query, UseGuards } from "@nestjs/common";
@@ -28,6 +28,14 @@ export class EventClientController {
   async searchEvents(@Query() request: SearchEventRequest) {
     const query = new SearchEventQuery(
       request.keyword?.trim() || '',
+      request.statuses || [],
+      request.categories ? request.categories.filter(CategoryId.isValid).map(id => CategoryId.of(id)) : [],
+      request.startFrom || null,
+      request.startTo || null,
+      request.endFrom || null,
+      request.endTo || null,
+      request.sortBy || 'created_at',
+      request.sortOrder || 'desc',
       request.page || 1,
       request.pageSize || 20
     );
