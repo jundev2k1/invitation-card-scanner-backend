@@ -23,13 +23,34 @@ export class EventMemberRepo implements IEventMemberRepo {
     return mapToEventMemberSearchResult(result.rows, page, pageSize);
   }
 
-  async addMember(eventId: string, userId: string): Promise<void> {
-    const query = sql.unsafe`SELECT add_event_member(${eventId},${userId})`;
+  async isExistMember(eventId: string, userId: string): Promise<boolean> {
+    const query = sql.unsafe`SELECT * FROM is_exist_event_member(
+      ${eventId},
+      ${userId}
+    )`;
+    const result = await this.dbContext.query(query);
+    return result.rows.length > 0;
+  }
+
+  async addMember(eventId: string, userId: string, roleDesc: string): Promise<void> {
+    const query = sql.unsafe`SELECT create_event_member(
+      ${eventId},
+      ${userId},
+      ${roleDesc}
+    )`;
+    await this.dbContext.query(query);
+  }
+
+  async updateInfo(id: string, roleDesc: string): Promise<void> {
+    const query = sql.unsafe`SELECT update_event_member(
+      ${id},
+      ${roleDesc}
+    )`;
     await this.dbContext.query(query);
   }
 
   async removeMember(memberId: string): Promise<void> {
-    const query = sql.unsafe`SELECT remove_event_member(${memberId})`;
+    const query = sql.unsafe`SELECT delete_event_member(${memberId})`;
     await this.dbContext.query(query);
   }
 

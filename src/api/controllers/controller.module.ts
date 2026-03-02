@@ -7,6 +7,7 @@ import { EventCardBackofficeController } from "./events/event-card.backoffice.co
 import { EventCardClientController } from "./events/event-card.client.controller";
 import { EventCategoryBackofficeController } from "./events/event-category.backoffice.controller";
 import { EventCategoryClientController } from "./events/event-category.client.controller";
+import { EventMemberBackofficeController } from "./events/event-member.backoffice.controller";
 import { EventBackofficeController } from "./events/event.backoffice.controller";
 import { EventClientController } from "./events/event.client.controller";
 import { ScanClientController } from "./scans/scan.client.controller";
@@ -27,7 +28,7 @@ const controllers = [
   UserClientController,
   UserBackofficeController,
 
-  // EventCategory Controllers
+  // Event Category Controllers
   EventCategoryBackofficeController,
   EventCategoryClientController,
 
@@ -35,9 +36,12 @@ const controllers = [
   EventClientController,
   EventBackofficeController,
 
-  // EventCard Controllers
+  // Event Card Controllers
   EventCardBackofficeController,
   EventCardClientController,
+
+  // Event Member Controllers
+  EventMemberBackofficeController,
 ];
 
 @Module({

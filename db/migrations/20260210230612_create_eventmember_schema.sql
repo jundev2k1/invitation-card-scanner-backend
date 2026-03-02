@@ -70,6 +70,23 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION is_exist_event_member
+(
+  p_event_id UUID,
+  p_user_id UUID
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1
+    FROM event_members
+    WHERE event_id = p_event_id
+      AND user_id = p_user_id
+  );
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION create_event_member
 (
   p_event_id UUID,
