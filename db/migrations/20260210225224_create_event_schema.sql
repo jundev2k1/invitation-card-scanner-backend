@@ -230,16 +230,16 @@ RETURNS TABLE
   category_slug VARCHAR,
   title VARCHAR,
   "description" TEXT,
-  start_at TIMESTAMP,
-  end_at TIMESTAMP,
+  start_at TIMESTAMPTZ,
+  end_at TIMESTAMPTZ,
   location_name VARCHAR,
   "address" VARCHAR,
   map_url VARCHAR,
   thumbnail_url VARCHAR,
   settings JSONB,
   "status" SMALLINT,
-  created_at TIMESTAMP,
-  updated_at TIMESTAMP
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ
 )
 LANGUAGE plpgsql AS $$
 BEGIN
