@@ -78,12 +78,12 @@ export const mapToEventDetailStats = (data: any): EventDetailStatsDto => {
   return new EventDetailStatsDto(
     data.id,
     {
-      totalCards: data.total_card_count,
-      availableCards: data.available_card_count,
-      usedCards: data.used_card_count
+      totalCards: Number(data.total_card_count),
+      availableCards: Number(data.available_card_count),
+      usedCards: Number(data.used_card_count)
     },
     {
-      totalMembers: data.total_member_count,
+      totalMembers: Number(data.total_member_count),
     }
   );
 }
