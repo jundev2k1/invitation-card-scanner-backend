@@ -43,6 +43,14 @@ export class EventBackofficeController {
   async searchEvents(@Query() request: SearchEventRequest) {
     const query = new SearchEventQuery(
       request.keyword?.trim() || '',
+      request.statuses || [],
+      request.categories ? request.categories.filter(CategoryId.isValid).map(id => CategoryId.of(id)) : [],
+      request.startFrom || null,
+      request.startTo || null,
+      request.endFrom || null,
+      request.endTo || null,
+      request.sortBy || 'created_at',
+      request.sortOrder || 'desc',
       request.page || 1,
       request.pageSize || 20
     );

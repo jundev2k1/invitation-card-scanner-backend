@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS events
 
 -- 2. Indexes
 CREATE INDEX IF NOT EXISTS idx_events_category_id ON events(category_id);
+CREATE INDEX IF NOT EXISTS idx_events_status ON events("status");
+CREATE INDEX IF NOT EXISTS idx_events_date_range ON events(start_at, end_at);
 CREATE INDEX IF NOT EXISTS idx_events_search_vector ON events USING GIN(search_vector);
 
 -- 3. Trigger for Search
@@ -43,6 +45,14 @@ FOR EACH ROW EXECUTE FUNCTION events_search_vector_trigger();
 CREATE OR REPLACE FUNCTION search_events_by_criteria
 (
   p_keyword VARCHAR,
+  p_category_id VARCHAR,
+  p_statuses SMALLINT[],
+  p_start_from TIMESTAMP,
+  p_start_to TIMESTAMP,
+  p_end_from TIMESTAMP,
+  p_end_to TIMESTAMP,
+  p_order_by VARCHAR,
+  p_order_direction VARCHAR,
   p_offset INT,
   p_limit INT
 )
@@ -85,6 +95,43 @@ BEGIN
             OR
             e.search_vector @@ websearch_to_tsquery('simple', p_keyword)
           )
+     AND  (
+            p_category_id = ''
+            OR
+            e.category_id = p_category_id
+          )
+     AND  (
+            cardinality(p_statuses) = 0
+            OR
+            e.status = ANY(p_statuses)
+          )
+     AND  (
+            p_start_from IS NULL
+            OR
+            e.start_at >= p_start_from
+          )
+     AND  (
+            p_start_to IS NULL
+            OR
+            e.start_at <= p_start_to
+          )
+     AND  (
+            p_end_from IS NULL
+            OR
+            e.end_at >= p_end_from
+          )
+     AND  (
+            p_end_to IS NULL
+            OR
+            e.end_at <= p_end_to
+          )
+  ORDER BY  CASE WHEN p_order_by = 'created_at' AND p_order_direction = 'desc' THEN e.created_at END DESC,
+            CASE WHEN p_order_by = 'created_at' AND p_order_direction = 'asc' THEN e.created_at END ASC,
+            CASE WHEN p_order_by = 'start_at' AND p_order_direction = 'desc' THEN e.start_at END DESC,
+            CASE WHEN p_order_by = 'start_at' AND p_order_direction = 'asc' THEN e.start_at END ASC,
+            CASE WHEN p_order_by = 'end_at' AND p_order_direction = 'desc' THEN e.end_at END DESC,
+            CASE WHEN p_order_by = 'end_at' AND p_order_direction = 'asc' THEN e.end_at END ASC,
+            CASE WHEN p_order_by NOT IN ('created_at', 'start_at', 'end_at') THEN e.created_at END DESC
    LIMIT  p_limit OFFSET p_offset;
 END
 $$;

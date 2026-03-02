@@ -4,6 +4,7 @@ import { POSTGRES_POOL } from '@/src/common/tokens';
 import { Event } from '@/src/domain/entities';
 import { EventStatus } from '@/src/domain/enums';
 import { IEventRepo } from '@/src/domain/interfaces/repositories/event.repo';
+import { CategoryId } from '@/src/domain/value-objects';
 import { Inject } from '@nestjs/common';
 import { type DatabasePool, DatabaseTransactionConnection, sql } from 'slonik';
 import { transactionStorage } from '../../database';
@@ -20,6 +21,14 @@ export class EventRepo implements IEventRepo {
 
   async searchByKeyword(
     keyword: string,
+    statuses: EventStatus[],
+    categories: CategoryId[],
+    startFrom: Date | null,
+    startEnd: Date | null,
+    endFrom: Date | null,
+    endTo: Date | null,
+    sortBy: string,
+    sortOrder: string,
     page: number,
     pageSize: number
   ): Promise<PaginatedResult<EventSearchItem>> {
@@ -27,6 +36,14 @@ export class EventRepo implements IEventRepo {
 
     const query = sql.unsafe`SELECT * FROM search_events_by_criteria(
       ${keyword},
+      ${sql.array(categories.map(c => c.value), 'string')},
+      ${sql.array(statuses, 'int2')},
+      ${startFrom?.toISOString() ?? null},
+      ${startEnd?.toISOString() ?? null},
+      ${endFrom?.toISOString() ?? null},
+      ${endTo?.toISOString() ?? null},
+      ${sortBy},
+      ${sortOrder},
       ${limit},
       ${pageSize})`;
     const { rows } = await this.dbContext.query(query);

@@ -4,7 +4,7 @@ import { RepositoryFacade } from "@/src/infrastracture/repositories";
 import { Inject } from "@nestjs/common";
 import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { EventSearchItem } from "../../dtos";
-import { SearchEventQuery, SearchEventRequest } from "./search.query";
+import { SearchEventQuery } from "./search.query";
 
 @QueryHandler(SearchEventQuery)
 export class SearchEventHandler implements IQueryHandler<SearchEventQuery, PaginatedResult<EventSearchItem>> {
@@ -12,11 +12,31 @@ export class SearchEventHandler implements IQueryHandler<SearchEventQuery, Pagin
     @Inject(REPO_FACADE) private readonly repoFacade: RepositoryFacade
   ) { }
 
-  async execute(request: SearchEventRequest): Promise<PaginatedResult<EventSearchItem>> {
+  async execute({
+    keyword,
+    statuses,
+    categories,
+    startFrom,
+    startTo,
+    endFrom,
+    endTo,
+    sortBy,
+    sortOrder,
+    page,
+    pageSize,
+  }: SearchEventQuery): Promise<PaginatedResult<EventSearchItem>> {
     return await this.repoFacade.event.searchByKeyword(
-      request.keyword || '',
-      request.page || 1,
-      request.pageSize || 20
+      keyword || '',
+      statuses || [],
+      categories || [],
+      startFrom,
+      startTo,
+      endFrom,
+      endTo,
+      sortBy || 'created_at',
+      sortOrder || 'desc',
+      page,
+      pageSize
     );
   }
 }

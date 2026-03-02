@@ -2,12 +2,21 @@ import { EventDetailStatsDto, EventSearchItem } from "@/src/application/features
 import { PaginatedResult } from "src/application/common";
 import { Event } from "src/domain/entities";
 import { EventStatus } from "../../enums";
+import { CategoryId } from "../../value-objects";
 
 export interface IEventRepo {
   searchByKeyword(
     keyword: string,
-    offset: number,
-    limit: number
+    statuses: EventStatus[],
+    categories: CategoryId[],
+    startFrom: Date | null,
+    startEnd: Date | null,
+    endFrom: Date | null,
+    endTo: Date | null,
+    sortBy: string,
+    sortOrder: string,
+    page: number,
+    pageSize: number
   ): Promise<PaginatedResult<EventSearchItem>>;
 
   searchByCategory(

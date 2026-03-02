@@ -3,7 +3,6 @@ import type { DatabasePool, DatabaseTransactionConnection } from 'slonik';
 import { sql } from 'slonik';
 import { PaginatedResult } from "src/application/common";
 import { UserSearchItem } from "src/application/features/users/dtos";
-import { QueryHelper } from "src/common";
 import { POSTGRES_POOL } from "src/common/tokens";
 import { User } from "src/domain/entities";
 import { UserStatus } from "src/domain/enums";
@@ -33,7 +32,7 @@ export class UserRepo implements IUserRepo {
   ): Promise<PaginatedResult<UserSearchItem>> {
     const limit = (page - 1) * pageSize;
     const query = sql.unsafe`SELECT * FROM search_users_by_criteria(
-      ${QueryHelper.formatToTsQuery(keyword.trim())},
+      ${keyword.trim()},
       ${sql.array(statuses, 'int2')},
       ${sortBy},
       ${sortOrder},
