@@ -41,10 +41,21 @@ export class EventBackofficeController {
   @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   async searchEvents(@Query() request: SearchEventRequest) {
+    const isValidStatus = (status: string) => Object.values(EventStatus).includes(status);
+    const statuses = Array.isArray(request.statuses)
+      ? request.statuses.filter(s => isValidStatus(s.toString()))
+      : request.statuses && isValidStatus(request.statuses)
+        ? [request.statuses]
+        : [];
+    const categories = Array.isArray(request.categories)
+      ? request.categories.filter(CategoryId.isValid).map(CategoryId.of)
+      : request.categories && CategoryId.isValid(request.categories)
+        ? [CategoryId.of(request.categories)]
+        : [];
     const query = new SearchEventQuery(
       request.keyword?.trim() || '',
-      request.statuses || [],
-      request.categories ? request.categories.filter(CategoryId.isValid).map(id => CategoryId.of(id)) : [],
+      statuses,
+      categories,
       request.startFrom || null,
       request.startTo || null,
       request.endFrom || null,
