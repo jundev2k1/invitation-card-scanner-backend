@@ -1,23 +1,23 @@
 import {
+  ArgumentsHost,
   Catch,
   ExceptionFilter,
-  ArgumentsHost,
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { Constants } from 'src/common';
-import { ApiResponseFactory } from '../common';
 import {
   BadRequestException,
-  UnauthorizedException,
-  ForbiddenException
+  ForbiddenException,
+  UnauthorizedException
 } from 'src/application/common/exceptions';
+import { Constants } from 'src/common';
 import {
   BussinessRuleViolationException,
   InvalidFormatException,
   InvalidParameterException,
   NotFoundException
 } from 'src/domain/exceptions';
+import { ApiResponseFactory } from '../common';
 
 type ErrorResponse = {
   status: number;
@@ -54,7 +54,7 @@ export class AppExceptionFilter implements ExceptionFilter {
         messageCode: badRequest.code.code,
         message: badRequest.code.message,
         details: badRequest.errorDetails,
-        log: badRequest.message || badRequest.code.message,
+        log: badRequest.stack || badRequest.message || badRequest.code.message,
       }
     }
     if (ex instanceof ForbiddenException) {
@@ -64,7 +64,7 @@ export class AppExceptionFilter implements ExceptionFilter {
         messageCode: forbidden.code.code,
         message: forbidden.code.message,
         details: forbidden.errorDetails,
-        log: forbidden.message || forbidden.code.message,
+        log: forbidden.stack || forbidden.message || forbidden.code.message,
       }
     }
     if (ex instanceof UnauthorizedException) {
@@ -74,7 +74,7 @@ export class AppExceptionFilter implements ExceptionFilter {
         messageCode: unauthorized.code.code,
         message: unauthorized.code.message,
         details: unauthorized.errorDetails,
-        log: unauthorized.message || unauthorized.code.message,
+        log: unauthorized.stack || unauthorized.message || unauthorized.code.message,
       }
     }
 
@@ -86,7 +86,7 @@ export class AppExceptionFilter implements ExceptionFilter {
         messageCode: bussinessRuleEx.code.code,
         message: bussinessRuleEx.code.message,
         details: bussinessRuleEx.errorDetails,
-        log: bussinessRuleEx.message || bussinessRuleEx.code.message,
+        log: bussinessRuleEx.stack || bussinessRuleEx.message || bussinessRuleEx.code.message,
       }
     }
     if (ex instanceof InvalidFormatException) {
@@ -96,7 +96,7 @@ export class AppExceptionFilter implements ExceptionFilter {
         messageCode: invalidFormatEx.code.code,
         message: invalidFormatEx.code.message,
         details: invalidFormatEx.errorDetails,
-        log: invalidFormatEx.message || invalidFormatEx.code.message,
+        log: invalidFormatEx.stack || invalidFormatEx.message || invalidFormatEx.code.message,
       }
     }
     if (ex instanceof InvalidParameterException) {
@@ -106,7 +106,7 @@ export class AppExceptionFilter implements ExceptionFilter {
         messageCode: invalidParameterEx.code.code,
         message: invalidParameterEx.code.message,
         details: invalidParameterEx.errorDetails,
-        log: invalidParameterEx.message || invalidParameterEx.code.message,
+        log: invalidParameterEx.stack || invalidParameterEx.message || invalidParameterEx.code.message,
       }
     }
     if (ex instanceof NotFoundException) {
@@ -116,7 +116,7 @@ export class AppExceptionFilter implements ExceptionFilter {
         messageCode: notFoundEx.code.code,
         message: notFoundEx.code.message,
         details: notFoundEx.errorDetails,
-        log: notFoundEx.message || notFoundEx.code.message,
+        log: notFoundEx.stack || notFoundEx.message || notFoundEx.code.message,
       }
     }
 

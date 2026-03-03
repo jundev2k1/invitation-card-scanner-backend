@@ -8,11 +8,11 @@ export class GetUserSuggestionRequest {
   @IsOptional()
   public readonly keyword: string;
 
-  @ApiProperty({ example: "['staff', 'admin']", required: false })
+  @ApiProperty({ example: ['STAFF', 'ADMIN'], required: false })
   @IsOptional()
   public readonly roles: string[];
 
-  @ApiProperty({ example: "['staff', 'admin']", required: false })
+  @ApiProperty({ example: 5, required: false })
   @IsOptional()
   @Type(() => Number)
   public readonly pageSize: number;

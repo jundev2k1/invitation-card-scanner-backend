@@ -18,7 +18,12 @@ export class EventMemberRepo implements IEventMemberRepo {
 
   async getMembersByEventId(eventId: string, keyword: string, page: number, pageSize: number)
     : Promise<PaginatedResult<EventMemberDto>> {
-    const query = sql.unsafe`SELECT * FROM get_event_members_by_event_id(${eventId},${keyword})`;
+    const query = sql.unsafe`SELECT * FROM get_event_members_by_event_id(
+      ${eventId},
+      ${keyword},
+      ${page},
+      ${pageSize}
+    )`;
     const result = await this.dbContext.query(query);
     return mapToEventMemberSearchResult(result.rows, page, pageSize);
   }
@@ -28,8 +33,7 @@ export class EventMemberRepo implements IEventMemberRepo {
       ${eventId},
       ${userId}
     )`;
-    const result = await this.dbContext.query(query);
-    return result.rows.length > 0;
+    return await this.dbContext.oneFirst(query);
   }
 
   async addMember(eventId: string, userId: string, roleDesc: string): Promise<void> {

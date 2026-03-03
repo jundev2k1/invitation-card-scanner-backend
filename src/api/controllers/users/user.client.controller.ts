@@ -24,9 +24,15 @@ export class UserClientController {
   @Permission(Role.admin, Role.staff)
   @HttpCode(HttpStatus.OK)
   async getSuggestions(@Query() parameters: GetUserSuggestionRequest) {
+    const roles = Array.isArray(parameters.roles!)
+      ? parameters.roles.filter(r => Role.isValid(r)).map(r => Role[r])
+      : (parameters.roles && Role.isValid(parameters.roles)
+        ? [Role.of(parameters.roles)]
+        : []
+      );
     const query = new GetUserSuggestionQuery(
       parameters.keyword.trim() || '',
-      parameters.roles ? parameters.roles.filter(r => Role.isValid(r)).map(r => Role[r]) : [],
+      roles,
       parameters.pageSize || 5
     );
     const result = await this.queryBus.execute(query);

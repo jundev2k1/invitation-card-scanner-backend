@@ -52,9 +52,9 @@ BEGIN
             AND
             u.role <> 'ROOT'
             AND
-            u.status = 'ACTIVE'
+            u.status = 2
           )
-   WHERE  event_id = p_event_id
+   WHERE  em.event_id = p_event_id
      AND  (
             p_keyword IS NULL
             OR
@@ -63,8 +63,6 @@ BEGIN
             u.search_vector @@ websearch_to_tsquery('simple', p_keyword)
             OR
             em.assigned_role ILIKE '%' || p_keyword || '%'
-            OR
-            em.user_id LIKE p_keyword || '%'
           )
    LIMIT  p_limit OFFSET p_offset;
 END;
@@ -80,9 +78,9 @@ LANGUAGE plpgsql AS $$
 BEGIN
   RETURN EXISTS (
     SELECT 1
-    FROM event_members
-    WHERE event_id = p_event_id
-      AND user_id = p_user_id
+      FROM  event_members
+     WHERE  event_id = p_event_id
+       AND  user_id = p_user_id
   );
 END;
 $$;
