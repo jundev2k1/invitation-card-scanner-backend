@@ -31,7 +31,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_event_cards_search_update
+CREATE OR REPLACE TRIGGER trg_event_cards_search_update
 BEFORE INSERT OR UPDATE
 ON event_cards
 FOR EACH ROW EXECUTE PROCEDURE event_cards_search_vector_trigger();

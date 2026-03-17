@@ -37,7 +37,7 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_events_search_update
+CREATE OR REPLACE TRIGGER trg_events_search_update
 BEFORE INSERT OR UPDATE ON events
 FOR EACH ROW EXECUTE FUNCTION events_search_vector_trigger();
 
@@ -216,7 +216,7 @@ BEGIN
     FROM  card_stats ec
           CROSS JOIN member_stats m;
 END
-$$
+$$;
 
 CREATE OR REPLACE FUNCTION get_event_by_id
 (

@@ -34,7 +34,7 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_event_categories_search_update
+CREATE OR REPLACE TRIGGER trg_event_categories_search_update
 BEFORE INSERT OR UPDATE ON event_categories
 FOR EACH ROW EXECUTE FUNCTION event_categories_search_vector_trigger();
 
